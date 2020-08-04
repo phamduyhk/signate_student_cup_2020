@@ -179,9 +179,8 @@ class TransformerClassification(nn.Module):
     def __init__(self, text_embedding_vectors, d_model=300, max_seq_len=256, output_dim=2, device="cpu"):
         super().__init__()
 
-
         self.net1 = Embedder(text_embedding_vectors)
-        self.net2 = PositionalEncoder(d_model=d_model, max_seq_len=max_seq_len,device=device)
+        self.net2 = PositionalEncoder(d_model=d_model, max_seq_len=max_seq_len, device=device)
         self.net3_1 = TransformerBlock(d_model=d_model)
         self.net3_2 = TransformerBlock(d_model=d_model)
         self.net4 = ClassificationHead(output_dim=output_dim, d_model=d_model)
