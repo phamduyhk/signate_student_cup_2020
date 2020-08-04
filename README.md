@@ -1,0 +1,1 @@
+# signate_student_cup_2020
