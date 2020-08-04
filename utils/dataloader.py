@@ -46,14 +46,13 @@ class Preprocessing():
         train_val_ds, test_ds = torchtext.data.TabularDataset.splits(
             path=temp_path, train=train_file,
             test=test_file, format='csv',
-            fields=[('Text', TEXT), ('toxic', LABEL), ('severe_toxic', LABEL), ('obscene', LABEL),
-                    ('threat', LABEL), ('insult', LABEL), ('identity_hate', LABEL)])
+            fields=[('Text', TEXT), ('jobflag', LABEL)])
 
         train_ds, val_ds = train_val_ds.split(
             split_ratio=0.7, random_state=random.seed(2395))
 
         # torchtextで単語ベクトルとして英語学習済みモデルを読み込みます
-        english_fasttext_vectors = Vectors(name=vectors)
+        english_fasttext_vectors = Vectors(name=vectors,cache=path)
 
         # ベクトル化したバージョンのボキャブラリーを作成します
         TEXT.build_vocab(
@@ -91,7 +90,7 @@ class Preprocessing():
         test = pd.read_csv(os.path.join(path, test_file))
         train = train.drop('id', axis=1)
         test = test.drop('id', axis=1)
-        for label in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]:
+        for label in ["jobflag"]:
             test[label] = pd.Series(0, index=test.index)
         temp_path = os.path.join(path, "temp")
         if not os.path.isdir(temp_path):

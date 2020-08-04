@@ -15,6 +15,8 @@ from sklearn.metrics import roc_auc_score, accuracy_score
 import torchtext
 import pandas as pd
 import datetime
+import os
+import sys
 
 from utils.EarlyStopping import EarlyStopping
 from utils.transformer import TransformerClassification
@@ -25,7 +27,7 @@ es = EarlyStopping(patience=10)
 sigmoid = nn.Sigmoid()
 
 
-def train(data_path, train_file, validate_file, vector_list,
+def train(data_path, train_file, test_file, vector_list,
           max_sequence_length=512, num_epochs=15, learning_rate=3e-5,
           device=None, train_mode=True,
           load_trained=False,
@@ -36,17 +38,16 @@ def train(data_path, train_file, validate_file, vector_list,
     np.random.seed(1234)
     random.seed(1234)
 
-    train_dl, val_dl, test_dl, TEXT = preprocessing.get_data(path=path, train_file=train_file, test_file=test_file,
+    train_dl, val_dl, test_dl, TEXT = preprocessing.get_data(path=data_path, train_file=train_file, test_file=test_file,
                                                              vectors=vector_list, max_length=max_sequence_length,
                                                              batch_size=1024)
 
     dataloaders_dict = {"train": train_dl, "val": val_dl}
 
     # define output dataframe
-    sample = pd.read_csv("./data/sample_submission.csv")
+    sample = pd.read_csv("./data/submit_sample.csv")
 
-    label_cols = ['toxic', 'severe_toxic', 'obscene',
-                  'threat', 'insult', 'identity_hate']
+    label_cols = ['jobflag']
 
     num_labels = len(label_cols)
 
@@ -77,13 +78,19 @@ def train(data_path, train_file, validate_file, vector_list,
     criterion = nn.MSELoss()
     optimizer = optim.Adam(net.parameters(), lr=learning_rate)
 
+    if not os.path.exists("./transformers"):
+        os.mkdir("./transformers")
+
+    net_trained_save_path = os.path.join("./transformers", "net_trained_transformer.weights")
+
+
     if train_mode:
         net_trained = train_model(net, dataloaders_dict,
                                   criterion, optimizer, num_epochs=num_epochs, label_cols=label_cols, device=device,
                                   early_stop=early_stop)
 
         # net_trainedを保存
-        torch.save(net_trained, "net_trained_transformer.weights")
+        torch.save(net_trained, net_trained_save_path)
 
     else:
         net_trained = net
@@ -210,5 +217,5 @@ if __name__ == '__main__':
     path = "./data/"
     train_file = "train.csv"
     test_file = "test.csv"
-    vector_list_file = "./data/wiki-news-300d-1M.vec"
-    train(data_path=path, train_file=train_file, validate_file=test_file, vector_list=vector_list_file)
+    vector_list_file = "wiki-news-300d-1M.vec"
+    train(data_path=path, train_file=train_file, test_file=test_file, vector_list=vector_list_file)

@@ -1,4 +1,5 @@
 data/wiki-news-300d-1M.vec.pt
+data/temp/
 .idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
