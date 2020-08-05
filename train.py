@@ -20,7 +20,7 @@ import torch.optim as optim
 
 # Evaluation
 
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score
 import seaborn as sns
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -54,6 +54,14 @@ train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text)
 valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
                             device=device, train=True, sort=True, sort_within_batch=True)
 test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
+
+
+def roc_auc_score_FIXED(y_true, y_pred):
+    try:
+        score = roc_auc_score(y_true, y_pred)
+    except ValueError:
+        score = accuracy_score(y_true, np.rint(y_pred))
+    return score
 
 
 class BERT(nn.Module):
@@ -130,9 +138,11 @@ def train(model,
     # initialize running values
     running_loss = 0.0
     valid_running_loss = 0.0
+    valid_running_roc_auc_score = 0.0
     global_step = 0
     train_loss_list = []
     valid_loss_list = []
+    valid_roc_auc_list = []
     global_steps_list = []
 
     # training loop
@@ -166,26 +176,30 @@ def train(model,
                         text = text.type(torch.LongTensor)
                         text = text.to(device)
                         output = model(text, labels)
-                        loss, _ = output
+                        loss, preds = output
 
                         valid_running_loss += loss.item()
+                        valid_running_roc_auc_score += roc_auc_score_FIXED(labels, preds)
 
                 # evaluation
                 average_train_loss = running_loss / eval_every
                 average_valid_loss = valid_running_loss / len(valid_loader)
+                average_valid_roc_auc_score = valid_running_roc_auc_score / len(valid_loader)
                 train_loss_list.append(average_train_loss)
                 valid_loss_list.append(average_valid_loss)
+                valid_roc_auc_list.append(average_valid_roc_auc_score)
                 global_steps_list.append(global_step)
 
                 # resetting running values
                 running_loss = 0.0
                 valid_running_loss = 0.0
+                valid_running_roc_auc_score = 0.0
                 model.train()
 
                 # print progress
-                print('Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
+                print('Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid ROC AUC: {:.4f}'
                       .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_loader),
-                              average_train_loss, average_valid_loss))
+                              average_train_loss, average_valid_loss, average_valid_roc_auc_score))
 
                 # checkpoint
                 if best_valid_loss > average_valid_loss:
