@@ -59,7 +59,7 @@ test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=Fa
 
 def roc_auc_score_FIXED(y_true, y_pred):
     try:
-        score = roc_auc_score(y_true, y_pred)
+        score = roc_auc_score(y_true, y_pred, multi_class="ovr")
     except ValueError:
         score = accuracy_score(y_true, np.rint(y_pred))
     return score
