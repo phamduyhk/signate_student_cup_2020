@@ -137,12 +137,13 @@ def train(model,
           criterion=nn.CrossEntropyLoss(),
           train_loader=train_iter,
           valid_loader=valid_iter,
-          num_epochs=5,
+          num_epochs=100,
           eval_every=len(train_iter) // 2,
           file_path=destination_folder,
           best_valid_loss=float("Inf")):
     # initialize running values
     running_loss = 0.0
+    running_f1_score = 0.0
     valid_running_loss = 0.0
     valid_running_f1_score = 0.0
     global_step = 0
@@ -160,7 +161,7 @@ def train(model,
             text = text.type(torch.LongTensor)
             text = text.to(device)
             output = model(text, labels)
-            loss, _ = output
+            loss, pred = output
 
             optimizer.zero_grad()
             loss.backward()
@@ -168,6 +169,9 @@ def train(model,
 
             # update running values
             running_loss += loss.item()
+            label_cpu = labels.cpu()
+            pred_cpu = torch.argmax(pred, 1).cpu()
+            running_f1_score += f1_score(label_cpu, pred_cpu, average='macro')
             global_step += 1
 
             # evaluation step
@@ -191,8 +195,9 @@ def train(model,
 
                 # evaluation
                 average_train_loss = running_loss / eval_every
+                average_f1_score = running_f1_score / eval_every
                 average_valid_loss = valid_running_loss / len(valid_loader)
-                average_f1_score = valid_running_f1_score / len(valid_loader)
+                average_valid_f1_score = valid_running_f1_score / len(valid_loader)
                 train_loss_list.append(average_train_loss)
                 valid_loss_list.append(average_valid_loss)
                 valid_f1_score_list.append(average_f1_score)
@@ -200,14 +205,16 @@ def train(model,
 
                 # resetting running values
                 running_loss = 0.0
+                running_f1_score = 0.0
                 valid_running_loss = 0.0
                 valid_running_f1_score = 0.0
                 model.train()
 
                 # print progress
-                print('Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid ROC AUC: {:.4f}'
-                      .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_loader),
-                              average_train_loss, average_valid_loss, average_f1_score))
+                print(
+                    'Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}, Train F1 Score: {:.4f}, Valid F1 Score: {:.4f}'
+                        .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_loader),
+                                average_train_loss, average_valid_loss, average_f1_score, average_valid_f1_score))
 
                 # checkpoint
                 if best_valid_loss > average_valid_loss:
