@@ -65,8 +65,6 @@ class BERT(nn.Module):
         self.encoder = BertForSequenceClassification.from_pretrained(options_name, num_labels=4)
 
     def forward(self, text, label):
-        print("text {}, label {}".format(text, label))
-        print(self.encoder(text, labels=label))
         loss, text_fea = self.encoder(text, labels=label)[:2]
 
         return loss, text_fea
