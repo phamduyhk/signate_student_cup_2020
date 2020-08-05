@@ -1,221 +1,252 @@
-# coding: utf-8
-"""
-Author: Pham Duy
-Created date: 2020/08/05
-"""
-# coding: utf-8
-import numpy as np
-import random
+# Libraries
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from sklearn.metrics import roc_auc_score, accuracy_score
-
-import torchtext
+import matplotlib.pyplot as plt
 import pandas as pd
-import datetime
 import os
-import sys
+import torch
 
-from utils.EarlyStopping import EarlyStopping
-from utils.transformer import TransformerClassification
-from utils.dataloader import Preprocessing
+# Preliminaries
 
-preprocessing = Preprocessing()
-es = EarlyStopping(patience=10)
-sigmoid = nn.Sigmoid()
+from torchtext.data import Field, TabularDataset, BucketIterator, Iterator
 
+# Models
 
-def train(data_path, train_file, test_file, vector_list,
-          max_sequence_length=512, num_epochs=15, learning_rate=3e-5,
-          device=None, train_mode=True,
-          load_trained=False,
-          early_stop=False):
-    if device is None:
-        device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-    torch.manual_seed(1234)
-    np.random.seed(1234)
-    random.seed(1234)
+import torch.nn as nn
+from transformers import BertTokenizer, BertForSequenceClassification
 
-    train_dl, val_dl, test_dl, TEXT = preprocessing.get_data(path=data_path, train_file=train_file, test_file=test_file,
-                                                             vectors=vector_list, max_length=max_sequence_length,
-                                                             batch_size=1024)
+# Training
 
-    dataloaders_dict = {"train": train_dl, "val": val_dl}
+import torch.optim as optim
 
-    # define output dataframe
-    sample = pd.read_csv("./data/submit_sample.csv")
+# Evaluation
 
-    label_cols = ['jobflag']
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
 
-    num_labels = len(label_cols)
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-    if load_trained is True:
-        net = torch.load("net_trained_transformer.weights",
-                         map_location=device)
-    else:
-        net = TransformerClassification(
-            text_embedding_vectors=TEXT.vocab.vectors, d_model=300, max_seq_len=max_sequence_length,
-            output_dim=num_labels,
-            device=device)
+# Model parameter
+MAX_SEQ_LEN = 128
+PAD_INDEX = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
+UNK_INDEX = tokenizer.convert_tokens_to_ids(tokenizer.unk_token)
 
-    net.train()
+# Fields
 
-    net.net3_1.apply(weights_init)
-    net.net3_2.apply(weights_init)
+label_field = Field(sequential=False, use_vocab=False, batch_first=True, dtype=torch.float)
+text_field = Field(use_vocab=False, tokenize=tokenizer.encode, lower=False, include_lengths=False, batch_first=True,
+                   fix_length=MAX_SEQ_LEN, pad_token=PAD_INDEX, unk_token=UNK_INDEX)
+fields = [('text', text_field), ('label', label_field)]
 
-    print('done setup network')
+# TabularDataset
+source_folder = "./data"
+train, valid, test = TabularDataset.splits(path=source_folder, train='train_data.csv', validation='valid_data.csv',
+                                           test='test_data.csv', format='CSV', fields=fields, skip_header=True)
 
-    print("running mode: {}".format("training" if train_mode else "predict"))
+# Iterators
 
-    # Define loss function
-    # criterion = nn.BCEWithLogitsLoss()
-    # criterion = nn.BCELoss()
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+destination_folder = "./output"
+if not os.path.exists(destination_folder):
+    os.mkdir(destination_folder)
 
-    """or"""
-    # criterion = nn.MultiLabelSoftMarginLoss()
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(net.parameters(), lr=learning_rate)
-
-    if not os.path.exists("./transformers"):
-        os.mkdir("./transformers")
-
-    net_trained_save_path = os.path.join("./transformers", "net_trained_transformer.weights")
+train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True)
+valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True)
+test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
 
 
-    if train_mode:
-        net_trained = train_model(net, dataloaders_dict,
-                                  criterion, optimizer, num_epochs=num_epochs, label_cols=label_cols, device=device,
-                                  early_stop=early_stop)
+class BERT(nn.Module):
 
-        # net_trainedを保存
-        torch.save(net_trained, net_trained_save_path)
+    def __init__(self):
+        super(BERT, self).__init__()
 
-    else:
-        net_trained = net
+        options_name = "bert-base-uncased"
+        self.encoder = BertForSequenceClassification.from_pretrained(options_name, num_labels=4)
 
-    net_trained.eval()
-    net_trained.to(device)
+    def forward(self, text, label):
+        print("text {}, label {}".format(text, label))
+        print(self.encoder(text, labels=label))
+        loss, text_fea = self.encoder(text, labels=label)[:2]
 
-    pred_probs = np.array([]).reshape(0, num_labels)
-    raw_pred = np.array([]).reshape(0, num_labels)
-
-    for batch in (test_dl):
-        inputs = batch.Text[0].to(device)
-
-        with torch.set_grad_enabled(False):
-            input_pad = 1
-            input_mask = (inputs != input_pad)
-
-            outputs, _, _ = net_trained(inputs, input_mask)
-            raw_output = outputs.cpu()
-            raw_pred = np.vstack([raw_pred, raw_output])
-            preds = (outputs.sigmoid() > 0.5) * 1
-            preds = preds.cpu()
-            pred_probs = np.vstack([pred_probs, preds])
-    print(raw_pred)
-    df = pd.DataFrame()
-    raw_pred = raw_pred.reshape(raw_pred.shape[1], raw_pred.shape[0])
-    for index, label in enumerate(label_cols):
-        df[label] = raw_pred[index]
-    df.to_csv("transformer_raw_pred.csv", index=False)
-    print(pred_probs)
-    # predicts = np.round(pred_probs)
-    predicts = pred_probs.reshape(pred_probs.shape[1], pred_probs.shape[0])
-    for index, label in enumerate(label_cols):
-        sample[label] = predicts[index]
-
-    # save predictions
-    if not os.path.exists("./submission"):
-        os.mkdir("./submission")
-    sample.to_csv("./submission/submission_Transformer_{}_{}ep.csv".format(
-        datetime.datetime.now().date(), num_epochs), index=False)
+        return loss, text_fea
 
 
-def roc_auc_score_FIXED(y_true, y_pred):
-    try:
-        score = roc_auc_score(y_true, y_pred)
-    except ValueError:
-        score = accuracy_score(y_true, np.rint(y_pred))
-    return score
+# Save and Load Functions
+
+def save_checkpoint(save_path, model, valid_loss):
+    if save_path == None:
+        return
+
+    state_dict = {'model_state_dict': model.state_dict(),
+                  'valid_loss': valid_loss}
+
+    torch.save(state_dict, save_path)
+    print(f'Model saved to ==> {save_path}')
 
 
-def weights_init(m):
-    classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
-        nn.init.kaiming_normal_(m.weight)
-        if m.bias is not None:
-            nn.init.constant_(m.bias, 0.0)
+def load_checkpoint(load_path, model):
+    if load_path == None:
+        return
+
+    state_dict = torch.load(load_path, map_location=device)
+    print(f'Model loaded from <== {load_path}')
+
+    model.load_state_dict(state_dict['model_state_dict'])
+    return state_dict['valid_loss']
 
 
-def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs, label_cols, device="cpu", early_stop=False):
-    print("using device: ", device)
+def save_metrics(save_path, train_loss_list, valid_loss_list, global_steps_list):
+    if save_path == None:
+        return
 
-    # if torch.cuda.device_count() > 1:
-    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
-    #     net = nn.DataParallel(net)
+    state_dict = {'train_loss_list': train_loss_list,
+                  'valid_loss_list': valid_loss_list,
+                  'global_steps_list': global_steps_list}
 
-    net.to(device)
+    torch.save(state_dict, save_path)
+    print(f'Model saved to ==> {save_path}')
 
-    torch.backends.cudnn.benchmark = True
 
+def load_metrics(load_path):
+    if load_path == None:
+        return
+
+    state_dict = torch.load(load_path, map_location=device)
+    print(f'Model loaded from <== {load_path}')
+
+    return state_dict['train_loss_list'], state_dict['valid_loss_list'], state_dict['global_steps_list']
+
+
+# Training Function
+
+def train(model,
+          optimizer,
+          criterion=nn.CrossEntropyLoss(),
+          train_loader=train_iter,
+          valid_loader=valid_iter,
+          num_epochs=5,
+          eval_every=len(train_iter) // 2,
+          file_path=destination_folder,
+          best_valid_loss=float("Inf")):
+    # initialize running values
+    running_loss = 0.0
+    valid_running_loss = 0.0
+    global_step = 0
+    train_loss_list = []
+    valid_loss_list = []
+    global_steps_list = []
+
+    # training loop
+    model.train()
     for epoch in range(num_epochs):
-        for phase in ['train', 'val']:
-            if phase == 'train':
-                net.train()
-            else:
-                net.eval()
+        for (text, labels), _ in train_loader:
+            labels = labels.type(torch.LongTensor)
+            labels = labels.to(device)
+            text = text.type(torch.LongTensor)
+            text = text.to(device)
+            output = model(text, labels)
+            loss, _ = output
 
-            epoch_loss = 0.0
-            epoch_metrics = 0
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-            for batch in (dataloaders_dict[phase]):
-                inputs = batch.Text[0].to(device)
-                y_true = torch.cat([getattr(batch, feat).unsqueeze(1)
-                                    for feat in label_cols], dim=1).float()
-                y_true = y_true.to(device)
+            # update running values
+            running_loss += loss.item()
+            global_step += 1
 
-                optimizer.zero_grad()
+            # evaluation step
+            if global_step % eval_every == 0:
+                model.eval()
+                with torch.no_grad():
 
-                with torch.set_grad_enabled(phase == 'train'):
-                    input_pad = 1
-                    input_mask = (inputs != input_pad)
+                    # validation loop
+                    for (text, labels), _ in valid_loader:
+                        labels = labels.type(torch.LongTensor)
+                        labels = labels.to(device)
+                        text = text.type(torch.LongTensor)
+                        text = text.to(device)
+                        output = model(text, labels)
+                        loss, _ = output
 
-                    outputs, _, _ = net(inputs, input_mask)
-                    # loss = criterion(outputs, y_true)
-                    loss = criterion(outputs, y_true)
-                    preds = (outputs > 0.5) * 1
+                        valid_running_loss += loss.item()
 
-                    # training mode
-                    if phase == 'train':
-                        loss.backward()
-                        optimizer.step()
+                # evaluation
+                average_train_loss = running_loss / eval_every
+                average_valid_loss = valid_running_loss / len(valid_loader)
+                train_loss_list.append(average_train_loss)
+                valid_loss_list.append(average_valid_loss)
+                global_steps_list.append(global_step)
 
-                    # validation mode
-                    epoch_loss += loss.item() * inputs.size(0)
-                    y_true = y_true.data.cpu()
-                    preds = preds.cpu()
-                    # print("y_true {}, y_pred {}".format(y_true, preds))
-                    epoch_metrics += roc_auc_score_FIXED(y_true, preds)
+                # resetting running values
+                running_loss = 0.0
+                valid_running_loss = 0.0
+                model.train()
 
-            epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
-            epoch_eval = epoch_metrics / len(dataloaders_dict[phase])
+                # print progress
+                print('Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
+                      .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_loader),
+                              average_train_loss, average_valid_loss))
 
-            print('Epoch {}/{} | {:^5} |  Loss: {:.4f} ROC_AUC: {:.4f}'.format(epoch + 1, num_epochs,
-                                                                               phase, epoch_loss, epoch_eval))
+                # checkpoint
+                if best_valid_loss > average_valid_loss:
+                    best_valid_loss = average_valid_loss
+                    save_checkpoint(file_path + '/' + 'model.pt', model, best_valid_loss)
+                    save_metrics(file_path + '/' + 'metrics.pt', train_loss_list, valid_loss_list, global_steps_list)
 
-        if early_stop:
-            if es.step(torch.tensor(epoch_eval)):
-                print("Early stoped at epoch: {}".format(num_epochs))
-                break  # early stop criterion is met, we can stop now
-
-    return net
+    save_metrics(file_path + '/' + 'metrics.pt', train_loss_list, valid_loss_list, global_steps_list)
+    print('Finished Training!')
 
 
-if __name__ == '__main__':
-    path = "./data/"
-    train_file = "train.csv"
-    test_file = "test.csv"
-    vector_list_file = "wiki-news-300d-1M.vec"
-    train(data_path=path, train_file=train_file, test_file=test_file, vector_list=vector_list_file)
+# Evaluation Function
+
+def evaluate(model, test_loader):
+    y_pred = []
+    y_true = []
+
+    model.eval()
+    with torch.no_grad():
+        for (text, labels), _ in test_loader:
+            labels = labels.type(torch.LongTensor)
+            labels = labels.to(device)
+            text = text.type(torch.LongTensor)
+            text = text.to(device)
+            output = model(text, labels)
+
+            _, output = output
+            y_pred.extend(torch.argmax(output, 1).tolist())
+            y_true.extend(labels.tolist())
+
+    print('Classification Report:')
+    print(classification_report(y_true, y_pred, labels=[1, 0], digits=4))
+
+    cm = confusion_matrix(y_true, y_pred, labels=[1, 0])
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, ax=ax, cmap='Blues', fmt="d")
+
+    ax.set_title('Confusion Matrix')
+
+    ax.set_xlabel('Predicted Labels')
+    ax.set_ylabel('True Labels')
+
+    ax.xaxis.set_ticklabels(['FAKE', 'REAL'])
+    ax.yaxis.set_ticklabels(['FAKE', 'REAL'])
+
+
+model = BERT().to(device)
+optimizer = optim.Adam(model.parameters(), lr=2e-5)
+
+train(model=model, optimizer=optimizer)
+
+best_model = BERT().to(device)
+
+load_checkpoint(destination_folder + '/model.pt', best_model)
+
+train_loss_list, valid_loss_list, global_steps_list = load_metrics(destination_folder + '/metrics.pt')
+plt.plot(global_steps_list, train_loss_list, label='Train')
+plt.plot(global_steps_list, valid_loss_list, label='Valid')
+plt.xlabel('Global Steps')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
