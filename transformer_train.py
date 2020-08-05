@@ -28,7 +28,7 @@ sigmoid = nn.Sigmoid()
 
 
 def train(data_path, train_file, test_file, vector_list,
-          max_sequence_length=512, num_epochs=15, learning_rate=3e-5,
+          max_sequence_length=512, num_epochs=1000, learning_rate=3e-5,
           device=None, train_mode=True,
           load_trained=False,
           early_stop=False):
@@ -74,8 +74,8 @@ def train(data_path, train_file, test_file, vector_list,
     # criterion = nn.BCELoss()
 
     """or"""
-    # criterion = nn.MultiLabelSoftMarginLoss()
-    criterion = nn.MSELoss()
+    criterion = nn.MultiLabelSoftMarginLoss()
+    # criterion = nn.MSELoss()
     optimizer = optim.Adam(net.parameters(), lr=learning_rate)
 
     if not os.path.exists("./transformers"):
@@ -110,20 +110,11 @@ def train(data_path, train_file, test_file, vector_list,
             outputs, _, _ = net_trained(inputs, input_mask)
             raw_output = outputs.cpu()
             raw_pred = np.vstack([raw_pred, raw_output])
-            preds = (outputs.sigmoid() > 0.5) * 1
+            preds = torch.argmax(outputs, 1)
             preds = preds.cpu()
-            pred_probs = np.vstack([pred_probs, preds])
-    print(raw_pred)
-    df = pd.DataFrame()
-    raw_pred = raw_pred.reshape(raw_pred.shape[1], raw_pred.shape[0])
+
     for index, label in enumerate(label_cols):
-        df[label] = raw_pred[index]
-    df.to_csv("transformer_raw_pred.csv", index=False)
-    print(pred_probs)
-    # predicts = np.round(pred_probs)
-    predicts = pred_probs.reshape(pred_probs.shape[1], pred_probs.shape[0])
-    for index, label in enumerate(label_cols):
-        sample[label] = predicts[index]
+        sample[label] = preds
 
     # save predictions
     if not os.path.exists("./submission"):
@@ -194,7 +185,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs, label_c
                     epoch_loss += loss.item() * inputs.size(0)
                     y_true = y_true.data.cpu()
                     preds = preds.cpu()
-                    print("y_true {}, y_pred {}".format(y_true, preds))
+                    # print("y_true {}, y_pred {}".format(y_true, preds))
                     epoch_metrics += f1_score(y_true, preds, average='macro')
 
             epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
