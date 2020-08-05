@@ -6,6 +6,9 @@ import pandas as pd
 import os
 import torch
 
+# preprocessing module
+from utils.dataloader import Preprocessing
+
 # Preliminaries
 
 from torchtext.data import Field, TabularDataset, BucketIterator, Iterator
@@ -24,6 +27,8 @@ import torch.optim as optim
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
 import seaborn as sns
 
+preprocessor = Preprocessing()
+
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 # Model parameter
@@ -38,23 +43,31 @@ text_field = Field(use_vocab=False, tokenize=tokenizer.encode, lower=False, incl
                    fix_length=MAX_SEQ_LEN, pad_token=PAD_INDEX, unk_token=UNK_INDEX)
 fields = [('text', text_field), ('label', label_field)]
 
-# TabularDataset
-source_folder = "./data"
-train, valid, test = TabularDataset.splits(path=source_folder, train='train_data.csv', validation='valid_data.csv',
-                                           test='test_data.csv', format='CSV', fields=fields, skip_header=True)
-
-# Iterators
-
+# SETTINGs
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 destination_folder = "./output"
 if not os.path.exists(destination_folder):
     os.mkdir(destination_folder)
+source_folder = "./data"
 
-train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text),
-                            device=device, train=True, sort=True, sort_within_batch=True)
-valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
-                            device=device, train=True, sort=True, sort_within_batch=True)
-test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
+# Get data (ver transformer)
+vector_list_file = "wiki-news-300d-1M.vec"
+max_sequence_length = 256
+train_iter, valid_iter, test_iter, TEXT = preprocessor.get_data(path=source_folder, train_file='train.csv',
+                                                                test_file='test.csv',
+                                                                vectors=vector_list_file,
+                                                                max_length=max_sequence_length,
+                                                                batch_size=32)
+
+
+# TabularDataset Ver
+# train, valid, test = TabularDataset.splits(path=source_folder, train='train_data.csv', validation='valid_data.csv',
+#                                            test='test_data.csv', format='CSV', fields=fields, skip_header=True)
+# train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text),
+#                             device=device, train=True, sort=True, sort_within_batch=True)
+# valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
+#                             device=device, train=True, sort=True, sort_within_batch=True)
+# test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
 
 
 class BERT(nn.Module):
