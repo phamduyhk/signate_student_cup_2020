@@ -1,4 +1,5 @@
 # Libraries
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,21 +54,20 @@ source_folder = "./data"
 # Get data (ver transformer)
 vector_list_file = "wiki-news-300d-1M.vec"
 max_sequence_length = 256
-train_iter, valid_iter, test_iter, TEXT = preprocessor.get_data(path=source_folder, train_file='train.csv',
-                                                                test_file='test.csv',
-                                                                vectors=vector_list_file,
-                                                                max_length=max_sequence_length,
-                                                                batch_size=32)
-
+batch_size = 16
 
 # TabularDataset Ver
-# train, valid, test = TabularDataset.splits(path=source_folder, train='train_data.csv', validation='valid_data.csv',
-#                                            test='test_data.csv', format='CSV', fields=fields, skip_header=True)
-# train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text),
-#                             device=device, train=True, sort=True, sort_within_batch=True)
-# valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
-#                             device=device, train=True, sort=True, sort_within_batch=True)
-# test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
+train_val_ds, test = TabularDataset.splits(path=source_folder, train='train.csv',
+                                           test='test.csv', format='CSV', fields=fields, skip_header=True)
+
+train, valid = train_val_ds.split(
+    split_ratio=0.7, random_state=random.seed(2395))
+
+train_iter = BucketIterator(train, batch_size=batch_size, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
+valid_iter = BucketIterator(valid, batch_size=batch_size, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
+test_iter = Iterator(test, batch_size=batch_size, device=device, train=False, shuffle=False, sort=False)
 
 
 class BERT(nn.Module):
