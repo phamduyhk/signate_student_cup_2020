@@ -57,8 +57,8 @@ max_sequence_length = 256
 batch_size = 16
 
 # TabularDataset Ver
-train_val_ds, test = TabularDataset.splits(path=source_folder, train='train.csv',
-                                           test='test.csv', format='CSV', fields=fields, skip_header=True)
+train_val_ds, test = TabularDataset.splits(path=source_folder, train='train_data.csv',
+                                           test='test_data.csv', format='CSV', fields=fields, skip_header=True)
 
 train, valid = train_val_ds.split(
     split_ratio=0.7, random_state=random.seed(2395))
