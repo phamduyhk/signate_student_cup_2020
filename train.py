@@ -1,6 +1,7 @@
 # Libraries
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import os
 import torch
@@ -179,7 +180,9 @@ def train(model,
                         loss, preds = output
 
                         valid_running_loss += loss.item()
-                        valid_running_roc_auc_score += roc_auc_score_FIXED(labels, preds)
+                        labels_cpu = labels.cpu()
+                        preds_cpu = preds.cpu()
+                        valid_running_roc_auc_score += roc_auc_score_FIXED(labels_cpu, preds_cpu)
 
                 # evaluation
                 average_train_loss = running_loss / eval_every
