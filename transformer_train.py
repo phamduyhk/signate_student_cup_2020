@@ -10,7 +10,7 @@ import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.metrics import roc_auc_score, accuracy_score, f1_score
 
 import torchtext
 import pandas as pd
@@ -49,7 +49,7 @@ def train(data_path, train_file, test_file, vector_list,
 
     label_cols = ['jobflag']
 
-    num_labels = len(label_cols)
+    num_labels = 4
 
     if load_trained is True:
         net = torch.load("net_trained_transformer.weights",
@@ -82,7 +82,6 @@ def train(data_path, train_file, test_file, vector_list,
         os.mkdir("./transformers")
 
     net_trained_save_path = os.path.join("./transformers", "net_trained_transformer.weights")
-
 
     if train_mode:
         net_trained = train_model(net, dataloaders_dict,
@@ -183,9 +182,8 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs, label_c
                     input_mask = (inputs != input_pad)
 
                     outputs, _, _ = net(inputs, input_mask)
-                    # loss = criterion(outputs, y_true)
                     loss = criterion(outputs, y_true)
-                    preds = (outputs > 0.5) * 1
+                    preds = torch.argmax(outputs, 1)
 
                     # training mode
                     if phase == 'train':
@@ -196,14 +194,14 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs, label_c
                     epoch_loss += loss.item() * inputs.size(0)
                     y_true = y_true.data.cpu()
                     preds = preds.cpu()
-                    # print("y_true {}, y_pred {}".format(y_true, preds))
-                    epoch_metrics += roc_auc_score_FIXED(y_true, preds)
+                    print("y_true {}, y_pred {}".format(y_true, preds))
+                    epoch_metrics += f1_score(y_true, preds, average='macro')
 
             epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
             epoch_eval = epoch_metrics / len(dataloaders_dict[phase])
 
-            print('Epoch {}/{} | {:^5} |  Loss: {:.4f} ROC_AUC: {:.4f}'.format(epoch + 1, num_epochs,
-                                                                               phase, epoch_loss, epoch_eval))
+            print('Epoch {}/{} | {:^5} |  Loss: {:.4f} F1 Score: {:.4f}'.format(epoch + 1, num_epochs,
+                                                                                phase, epoch_loss, epoch_eval))
 
         if early_stop:
             if es.step(torch.tensor(epoch_eval)):
