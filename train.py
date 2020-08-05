@@ -173,7 +173,7 @@ def train(model,
 
                         valid_running_loss += loss.item()
                         labels_cpu = labels.cpu()
-                        preds_cpu = preds.cpu()
+                        preds_cpu = torch.argmax(preds, 1).cpu()
                         valid_running_f1_score += f1_score(labels_cpu, preds_cpu, average='macro')
 
                 # evaluation
@@ -226,9 +226,9 @@ def evaluate(model, test_loader):
             y_true.extend(labels.tolist())
 
     print('Classification Report:')
-    print(classification_report(y_true, y_pred, labels=[1, 0], digits=4))
+    print(classification_report(y_true, y_pred, labels=[3, 2, 1, 0], digits=4))
 
-    cm = confusion_matrix(y_true, y_pred, labels=[1, 0])
+    cm = confusion_matrix(y_true, y_pred, labels=[3, 2, 1, 0])
     ax = plt.subplot()
     sns.heatmap(cm, annot=True, ax=ax, cmap='Blues', fmt="d")
 
