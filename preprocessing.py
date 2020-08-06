@@ -14,7 +14,7 @@ from joblib import Memory
 from torchtext import data
 from sklearn.model_selection import KFold, StratifiedKFold, LeaveOneOut
 
-NLP = spacy.load('en')
+NLP = spacy.load('')
 MAX_CHARS = 20000
 LOGGER = logging.getLogger("SIGNATE STUDENT CUP DATASET")
 MEMORY = Memory(cachedir="cache/", verbose=1)
@@ -22,7 +22,7 @@ MEMORY = Memory(cachedir="cache/", verbose=1)
 
 def tokenizer(description):
     description = re.sub(
-        r"[\*\"“”\n\\…\+\-\/\=\(\)‘•:\[\]\|’\!;]", " ", str(description))
+        r"[\*\"“”\n\\…\+\-\/\=\(\)‘•:\[\]\en|’\!;]", " ", str(description))
     description = re.sub(r"[ ]+", " ", description)
     description = re.sub(r"\!+", "!", description)
     description = re.sub(r"\,+", ",", description)
@@ -103,7 +103,7 @@ K FOLD USAGE
 """
 
 
-def get_dataset(split_mode="KFold", fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
+def get_dataset(split_mode=None, fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
     """
 
     Args:
@@ -130,7 +130,7 @@ def get_dataset(split_mode="KFold", fix_length=100, lower=False, vectors=None, n
         splicer = loo
     elif split_mode is "StratifiedKFold":
         splicer = skf
-    else:
+    elif split_mode is "KFold":
         splicer = kf
 
     fields = [
@@ -149,7 +149,10 @@ def get_dataset(split_mode="KFold", fix_length=100, lower=False, vectors=None, n
             )
 
     test = data.Dataset(test_exs, fields[:2])
-    return iter_folds(), test
+    if split_mode:
+        return iter_folds(), test
+    else:
+        return data.Dataset(train_exs, fields), test
 
 
 def get_iterator(dataset, batch_size, device=0, train=True, shuffle=True, repeat=False):
@@ -176,7 +179,7 @@ def preprocessing(file_path):
 if __name__ == '__main__':
     train_val_generator, test_dataset = get_dataset(
         fix_length=100, lower=True, vectors="fasttext.en.300d",
-        n_folds=5, seed=123
+        n_folds=2, seed=123
     )
     for fold, (train_dataset, val_dataset) in enumerate(train_val_generator):
         for batch in get_iterator(

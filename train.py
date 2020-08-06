@@ -161,7 +161,6 @@ def train(model,
           criterion=nn.CrossEntropyLoss(),
           file_path=destination_folder,
           num_epochs=100,
-          n_folds=5,
           best_valid_loss=float("Inf")):
     # initialize running values
     running_loss = 0.0
@@ -177,9 +176,9 @@ def train(model,
     # training loop
     model.train()
     for epoch in range(num_epochs):
-        train_val_generator, test_dataset = get_dataset(split_mode="KFold",
+        train_val_generator, test_dataset = get_dataset(split_mode=None,
                                                         fix_length=max_sequence_length, lower=True, vectors="fasttext.en.300d",
-                                                        n_folds=n_folds, seed=123
+                                                        n_folds=5, seed=123
                                                         )
         for fold, (train_dataset, val_dataset) in enumerate(train_val_generator):
             # training step
