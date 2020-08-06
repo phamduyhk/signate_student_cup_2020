@@ -212,7 +212,7 @@ def train(model,
             with torch.no_grad():
                 # validation loop
                 for batch in get_iterator(
-                        train_dataset, batch_size=batch_size, train=True,
+                        val_dataset, batch_size=batch_size, train=True,
                         shuffle=True, repeat=False
                 ):
                     text = torch.transpose(batch.description.data, 0, 1)
