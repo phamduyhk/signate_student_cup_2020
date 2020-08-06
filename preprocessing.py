@@ -22,7 +22,7 @@ MEMORY = Memory(cachedir="cache/", verbose=1)
 
 def tokenizer(description):
     description = re.sub(
-        r"[\*\"“”\n\\…\+\-\/\=\(\)‘•:\[\]\en|’\!;]", " ", str(description))
+        r"[\*\"“”\n\\…\+\-\/\=\(\)‘•:\[\]\|’\!;]", " ", str(description))
     description = re.sub(r"[ ]+", " ", description)
     description = re.sub(r"\!+", "!", description)
     description = re.sub(r"\,+", ",", description)
@@ -103,7 +103,7 @@ K FOLD USAGE
 """
 
 
-def get_dataset(split_mode=None, fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
+def get_dataset(split_mode="KFold", fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
     """
 
     Args:
@@ -130,7 +130,7 @@ def get_dataset(split_mode=None, fix_length=100, lower=False, vectors=None, n_fo
         splicer = loo
     elif split_mode is "StratifiedKFold":
         splicer = skf
-    elif split_mode is "KFold":
+    else:
         splicer = kf
 
     fields = [
@@ -149,10 +149,7 @@ def get_dataset(split_mode=None, fix_length=100, lower=False, vectors=None, n_fo
             )
 
     test = data.Dataset(test_exs, fields[:2])
-    if split_mode:
-        return iter_folds(), test
-    else:
-        return data.Dataset(train_exs, fields), test
+    return iter_folds(), test
 
 
 def get_iterator(dataset, batch_size, device=0, train=True, shuffle=True, repeat=False):
