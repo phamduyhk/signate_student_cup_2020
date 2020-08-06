@@ -55,7 +55,7 @@ source_folder = "./data"
 
 # Get data (ver transformer)
 vector_list_file = "wiki-news-300d-1M.vec"
-max_sequence_length = 64
+max_sequence_length = 512
 batch_size = 128
 
 
