@@ -14,7 +14,7 @@ from joblib import Memory
 from torchtext import data
 from sklearn.model_selection import KFold, StratifiedKFold, LeaveOneOut
 
-NLP = spacy.load('')
+NLP = spacy.load('en')
 MAX_CHARS = 20000
 LOGGER = logging.getLogger("SIGNATE STUDENT CUP DATASET")
 MEMORY = Memory(cachedir="cache/", verbose=1)
