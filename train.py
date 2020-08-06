@@ -55,8 +55,8 @@ source_folder = "./data"
 
 # Get data (ver transformer)
 vector_list_file = "wiki-news-300d-1M.vec"
-max_sequence_length = 256
-batch_size = 32
+max_sequence_length = 64
+batch_size = 128
 
 
 # # TabularDataset Ver
@@ -177,10 +177,10 @@ def train(model,
     # training loop
     model.train()
     for epoch in range(num_epochs):
-        train_val_generator, test_dataset = get_dataset(
-            fix_length=100, lower=True, vectors="fasttext.en.300d",
-            n_folds=n_folds, seed=123
-        )
+        train_val_generator, test_dataset = get_dataset(split_mode="KFold",
+                                                        fix_length=max_sequence_length, lower=True, vectors="fasttext.en.300d",
+                                                        n_folds=n_folds, seed=123
+                                                        )
         for fold, (train_dataset, val_dataset) in enumerate(train_val_generator):
             # training step
             for batch in get_iterator(
@@ -230,8 +230,8 @@ def train(model,
                     valid_running_f1_score += f1_score(labels_cpu, preds_cpu, average='macro')
 
             # evaluation
-            average_train_loss = running_loss / train_dataset
-            average_f1_score = running_f1_score / train_dataset
+            average_train_loss = running_loss / len(train_dataset)
+            average_f1_score = running_f1_score / len(train_dataset)
             average_valid_loss = valid_running_loss / len(val_dataset)
             average_valid_f1_score = valid_running_f1_score / len(val_dataset)
             train_loss_list.append(average_train_loss)
