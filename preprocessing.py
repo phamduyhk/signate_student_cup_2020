@@ -12,7 +12,7 @@ import spacy
 import torch
 from joblib import Memory
 from torchtext import data
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, StratifiedKFold, LeaveOneOut
 
 NLP = spacy.load('en')
 MAX_CHARS = 20000
@@ -33,7 +33,7 @@ def tokenizer(description):
 
 
 def prepare_csv():
-    df_train = pd.read_csv("data/train.csv")
+    df_train = pd.read_csv("data/train_data.csv")
     df_train["description"] = df_train.description.str.replace("\n", " ")
     df_train.to_csv("cache/dataset_train.csv", index=False)
     df_test = pd.read_csv("data/test.csv")
@@ -81,6 +81,7 @@ def read_files(fix_length=100, lower=False, vectors=None):
     LOGGER.debug("Done preparing the datasets")
     return train.examples, test.examples, description
 
+
 """
 K FOLD USAGE
 
@@ -101,11 +102,36 @@ K FOLD USAGE
 #     print("train {}, test {}".format(train, test))
 """
 
-def get_dataset(fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
+
+def get_dataset(split_mode="KFold", fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
+    """
+
+    Args:
+        split_mode:
+            0: KFold
+            1: LeaveOneOut
+            2: StratifiedKFold
+        fix_length:
+        lower:
+        vectors:
+        n_folds:
+        seed:
+
+    Returns:
+        (train, valid), test
+    """
     train_exs, test_exs, description = read_files(
         fix_length=fix_length, lower=lower, vectors=vectors)
 
     kf = KFold(n_splits=n_folds, random_state=seed)
+    loo = LeaveOneOut()
+    skf = StratifiedKFold(n_splits=n_folds, random_state=seed)
+    if split_mode is "LeaveOneOut":
+        splicer = loo
+    elif split_mode is "StratifiedKFold":
+        splicer = skf
+    else:
+        splicer = kf
 
     fields = [
         ('id', None),
@@ -116,7 +142,7 @@ def get_dataset(fix_length=100, lower=False, vectors=None, n_folds=5, seed=999):
 
     def iter_folds():
         train_exs_arr = np.array(train_exs)
-        for train_idx, val_idx in kf.split(train_exs_arr):
+        for train_idx, val_idx in splicer.split(train_exs_arr):
             yield (
                 data.Dataset(train_exs_arr[train_idx], fields),
                 data.Dataset(train_exs_arr[val_idx], fields),
