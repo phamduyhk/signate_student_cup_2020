@@ -10,7 +10,8 @@ from sklearn.metrics import roc_auc_score, f1_score
 from keras.models import Model
 from keras.layers import Input, Dense, Embedding, SpatialDropout1D, concatenate
 from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, GlobalMaxPooling1D
-rom keras.layers import Input, Dense, Embedding, SpatialDropout1D, add, concatenate
+from keras.layers.recurrent import LSTM
+from keras.layers import Input, Dense, Embedding, SpatialDropout1D, add, concatenate
 from keras.layers import CuDNNLSTM, Bidirectional, GlobalMaxPooling1D, GlobalAveragePooling1D, CuDNNGRU, Conv1D
 from keras.preprocessing import text, sequence
 from keras.callbacks import Callback
@@ -64,7 +65,7 @@ def get_coefs(word, *arr):
 embeddings_index = dict(get_coefs(*o.rstrip().rsplit(' ')) for o in open(EMBEDDING_FILE, encoding="utf-8"))
 
 word_index = tokenizer.word_index
-nb_words = min(max_features, len(word_index))
+nb_words = max(max_features, len(word_index)+1)
 print(nb_words)
 embedding_matrix = np.zeros((nb_words, embed_size))
 print(embedding_matrix.shape)
@@ -117,8 +118,8 @@ def get_gru_lstm_model(embedding_matrix):
     words = Input(shape=(None,))
     x = Embedding(*embedding_matrix.shape, weights=[embedding_matrix], trainable=False)(words)
     x = SpatialDropout1D(0.2)(x)
-    x = Bidirectional(CuDNNGRU(LSTM_UNITS, return_sequences=True))(x)
-    x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
+    x = Bidirectional(GRU(LSTM_UNITS, return_sequences=True))(x)
+    x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
 
     hidden = concatenate([
         GlobalMaxPooling1D()(x),
@@ -134,11 +135,14 @@ def get_gru_lstm_model(embedding_matrix):
     return model
 
 
+# model = get_gru_lstm_model(embedding_matrix)
 model = get_gru_model()
 print(model.summary())
+if os.path.exists("grulstm_param.hdf5"):
+    model.load_weights("grulstm_param.hdf5")
 
 batch_size = 32
-epochs = 10
+epochs = 5
 num_folds = 5
 kf = KFold(n_splits=num_folds)
 fold_no = 1
@@ -152,8 +156,8 @@ for train, val in kf.split(x_train, y_train_onehot):
                      validation_data=(x_train[val], y_train_onehot[val]),
                      callbacks=[eval_score], verbose=2)
     fold_no += 1
-
+model.save_weights("grulstm_param.hdf5")
 y_pred = model.predict(x_test, batch_size=1024)
 pred = np.argmax(y_pred, 1)
 submission.iloc[:, 1] = pred + 1
-submission.to_csv('submission.csv', index=False)
+submission.to_csv('submission.csv', index=False, header=None)
