@@ -80,7 +80,7 @@ class Evaluation(Callback):
             y_pred = self.model.predict(self.X_val, verbose=0)
             label = np.argmax(self.y_val, 1)
             predict = np.argmax(y_pred, 1)
-            score = f1_score(label, predict)
+            score = f1_score(label, predict, average='macro')
             print("\n f1 score - epoch: %d - score: %.6f \n" % (epoch + 1, score))
 
 
