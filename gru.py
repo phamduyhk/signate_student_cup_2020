@@ -1,9 +1,10 @@
 import numpy as np
+from keras.wrappers.scikit_learn import KerasClassifier
 
 np.random.seed(42)
 import pandas as pd
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import roc_auc_score, f1_score
 
 from keras.models import Model
@@ -37,9 +38,15 @@ onehot_encoder = OneHotEncoder(sparse=False)
 reshaped = y_train.reshape(len(y_train), 1)
 y_train_onehot = onehot_encoder.fit_transform(reshaped)
 
+# SETTINGS
 max_features = 30000
 maxlen = 100
 embed_size = 300
+num_folds = 10
+
+# Define per-fold score containers <-- these are new
+acc_per_fold = []
+loss_per_fold = []
 
 tokenizer = text.Tokenizer(num_words=max_features)
 tokenizer.fit_on_texts(list(X_train) + list(X_test))
@@ -105,14 +112,26 @@ def get_model():
 model = get_model()
 print(model.summary())
 
-batch_size = 32
-epochs = 10
+# batch_size = 32
+# epochs = 10
+# kf = KFold(n_splits=num_folds)
+# fold_no = 1
+# for train, val in kf.split(x_train, y_train_onehot):
+#     print('------------------------------------------------------------------------')
+#     print(f'Training for fold {fold_no}/{num_folds} ...')
+#     # X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
+#     eval_score = Evaluation(validation_data=(x_train[val], y_train_onehot[val]), interval=1)
+#
+#     hist = model.fit(x_train[train], y_train_onehot[train], batch_size=batch_size, epochs=epochs,
+#                      validation_data=(x_train[val], y_train_onehot[val]),
+#                      callbacks=[eval_score], verbose=2)
+#     fold_no += 1
 
-X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
-eval_score = Evaluation(validation_data=(X_val, y_val), interval=1)
+estimator = KerasClassifier(build_fn=get_model, epochs=2, batch_size=16, verbose=2)
+kfold = KFold(n_splits=5, shuffle=True)
+results = cross_val_score(estimator, x_train, y_train_onehot, cv=kfold)
+print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 
-hist = model.fit(X_tra, y_tra, batch_size=batch_size, epochs=epochs, validation_data=(X_val, y_val),
-                 callbacks=[eval_score], verbose=2)
 
 y_pred = model.predict(x_test, batch_size=1024)
 pred = np.argmax(y_pred, 1)
