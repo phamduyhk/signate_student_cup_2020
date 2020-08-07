@@ -1,0 +1,13 @@
+id,From,To,Degree,Major
+1,2005,2009,Bachelor,Mathematics
+1,2009,2011,Master,"Economics, Econometrics, and Management"
+2,1993,1998,Bachelor,Computer Science
+2,1998,2003,PhD,Computer Science
+3,2009,2013,Bachelor,Computer Engineering
+3,2013,2015,Master,Computer Engineering
+4,2010,2014,Bachelor,Mechanical Engineering
+4,2015,2016,Master,Computer Science
+5,2003,2007,Bachelor,Mathematical Engineering
+5,2007,2008,Master,Mathematical Engineering
+6,2006,2010,Bachelor,Chemical Engineering
+6,2010,2012,Master,Business Analytics
