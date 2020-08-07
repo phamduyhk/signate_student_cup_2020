@@ -27,7 +27,7 @@ EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
 
 train = pd.read_csv('data/train.csv')
 test = pd.read_csv('data/test.csv')
-submission = pd.read_csv('data/submit_sample.csv',header=None)
+submission = pd.read_csv('data/submit_sample.csv', header=None)
 
 X_train = train["description"].fillna("fillna").values
 y_train = train["jobflag"].values
@@ -106,7 +106,7 @@ model = get_model()
 print(model.summary())
 
 batch_size = 32
-epochs = 20
+epochs = 10
 
 X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
 eval_score = Evaluation(validation_data=(X_val, y_val), interval=1)
@@ -115,6 +115,6 @@ hist = model.fit(X_tra, y_tra, batch_size=batch_size, epochs=epochs, validation_
                  callbacks=[eval_score], verbose=2)
 
 y_pred = model.predict(x_test, batch_size=1024)
-pred = np.argmax(y_pred,1)
-submission.ix[:, 1] = pred
+pred = np.argmax(y_pred, 1)
+submission.iloc[:, 1] = pred + 1
 submission.to_csv('submission.csv', index=False)
