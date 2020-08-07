@@ -1,0 +1,109 @@
+id,From,To,industry,jobtitle,achievements
+1,2011,2015,Consulting,Senior Consultant,"- Engaged multiple CRM/Analytic projects across Asia Pacific with leading multinational customers and partners. 
+- Led three projects to assist the marketing operations group develop analytical capabilities.
+- Scoped more than 100 KPIs and developed dashboards for the sales and marketing leaders of 19 brands.
+- Analyzed a client's success for an end-to-end planning change.
+- Assessed sales and marketing group’s competitive readiness for product loss-of-exclusivity, and recommended capabilities to the executive committee to develop and enhance.
+- Facilitated workshops with senior sales and marketing leadership, led focus interviews, and developed frameworks to analyze qualitative information.
+- Managed the program to improve classification practices and enabled data-driven decision-making.
+- Ran PMO, managed six work streams and led quarterly meetings with the managers."
+1,2016,2016,Consulting,Natural Language Processing Consultant,"- Scraped PDFs with Python in order to help digitize the official documents, The City Record.
+- Helped design a schema for entries (such as extracting addresses).
+- Created data cleaning regimes to standardize entries from over a hundred city agencies that all reported in different formats.
+- Used Python and NLTK to perform exploratory Natural Language Processing on a century-long corpus of publications.
+- Worked to integrate this pipeline into MS Access."
+1,2017,2019,Tech,Data Scientist (Contract),"- Led the development and implementation of the data analysis and research infrastructure.
+- Developed the AWS S3, Lambda, EC2, and Docker orchestration for extracting, processing, and storing financial, economic and market data from Thomson Reuters Eikon API.
+- Built an NLP language model using Snorkel and MeTaL for the analysis earnings of call transcripts.
+- Implemented forecasting models including retail sales analysis using more than 1TB of extraneous data such as weather, events, and client-specific metrics. Used proprietary infrastructure based on PostgreSQL, Vector, Bash and TensorFlow/Scikit-learn.
+- Drove business decisions by researching, testing and integrating various regression and classification-based models using Python Scikit-learn, TensorFlow, and Keras.
+- Developed an insurance algorithm for seismic and flood risk computation using MCMC."
+1,2019,2020,Tech,Data Scientist (NLP Research),"- Developed language models across 100GB email data using transfer learning, text analysis/classification and clustering, few-shot learning, embeddings, and attention RNN networks.
+- Worked on unsupervised data augmentation, weak supervision in Snorkel MeTaL and multi-task learning for malicious data classification.
+- Implemented end-to-end machine learning models, in production, using TensorFlow, AWS S3/Athena and SageMaker on both CPU and GPU based architectures.
+- Worked on string similarity and matching with one-shot learning/Siamese networks.
+- Implemented various codebase improvements, testing automation, parallelized processing, and documentation design."
+2,2004,2018,Tech,Research Scientist,"- As both an individual engineering contributor and a manager of data science group, I worked on the quality improvement of recommendation system and then the introduction of machine learning and deep learning for it. 
+- The role of our team was to select a suitable hotel and nearby restaurant for the travelers.
+- Our approach combines lexical analysis, syntax analysis, and semantic analysis to understand sentiment towards hotel features and the profiling of guest type (solo, family, couple etc). The proposed system recommends hotels based on the hotel features and guest type for personalized recommendation. The developed system not only has the ability to handle heterogeneous data using big data Hadoop platform but also recommends hotel class based on guest type using fuzzy rules. We finally result in the improvement in accuracy by 10% and the decrease in response time by 20%, significantly better than the previous approaches.
+- Taking various initiatives with search quality improvements especially in Asian language understanding
+- Working on machine learning infrastructure and information retrieval techniques to deeply understand the data and produce semantics/knowledge which is the key to the products we power
+- Designing and scaling the big data systems
+- Being the key member for the business and product strategy team
+- Grew and managed the quality team responsible for defining, measuring, and improving core metrics"
+2,2019,2020,Tech,Data Scientist,"- Our team was in charge of refurbishing recommendation system by modeling the human sense of the relationships towards objects based on their appearance.
+- Our approach is based on handling the big dataset and developing a scalable method for uncovering human visual recognition.
+- Cast this as a network inference problem defined on graphs of related images, and provide a large-scale dataset for the training and evaluation of the model. The system we develop is capable of recommending which clothes and accessories will go well together, and that capability cannot be seen at no other recommendation systems in the world so far.
+- Lead the engineering team building the core components 
+- Refined strategy for production, consumption, and engagement growth of ourproduct"
+3,2015,2015,Tech,Machine Learning Engineer,"- Developed a Linux and Windows application for HR software to measure employee productivity.
+- Cleaned and analyzed large datasets using Spark and Zeppelin.
+- Created a service for Entity extracting using NLTK.
+- Created a generic ML prediction service using Scikit Learn and Flask."
+3,2016,2016,Tech,Machine Learning Engineer,"- Designed the curriculum of various Data Science/ML courses.
+- Evaluated various IoT platforms.
+- Investigated technologies such a TensorFlow and OpenCV to run ML algorithms on IoT devices."
+3,2017,2017,Tech,Data Scientist,"- Created a real time system to capture the behavior of the pilots.
+- Designed a robust data pipeline capable of processing millions of images.
+- Developed a Neural Network model to drive a delivery robot on the sidewalk."
+3,2018,2018,Tech,Machine Learning Engineer,"- Created computer vision models for autonomous visual inspection (AVI) for big manufacturing companies.
+- Proposed and developed internal tools to improve the efficiency of processing datasets for machine learning analysis.
+- Developed GAN models for data augmentation related tasks."
+3,2019,2020,Tech,Senior Machine Learning Engineer,"- Developed a model for ranking potential costumers.
+- Developed a neural network model for predicting sales using time series data.
+- Created dashboards to visualize the supply and demand of users using Dash, Plotly, and Mapbox.
+- Developed a deep learning model for the classification of photographer portfolios.
+- Developed an image clustering algorithm for automatic culling.
+- Developed some web-scrapers and other RPA automation tools to gather image data."
+4,2016,2018,Tech,Data Engineer,"- Maintaining a data warehouse
+- Developed software to detect errors and upgrades among users and thus improved the performance of the product
+- Led a project to successfully create a data pipeline using Apache Kafka and Pyspark
+- Adopted agile methodology and interacted directly with the entire team by providing feedback on the design
+- Suggested/implemented optimal solutions, and tailored application to meet business requirement
+- Automated ETL process and made it easier to wrangle data, reducing processing time as much as 40%
+- Developed server monitoring scripts that reported down times on our application
+- Provided an interface to connect the algorithm with the project's existing code"
+4,2018,2020,Consulting,Data Scientist,"- Worked on various data pipelines and made it possible to analyze distributed data
+- Developed dashboard to visualize the data related to the servers and other hardware components so that they are available to our client
+- Formulated next generation analytics environment, providing self-service, centralized platform for any data-centric activity which allows full 360 degree view of the product usage of the customers
+- Modernized data analytics environment by using cloud based Hadoop platform, version control system Git, automatic deployment tool and server-based workflow scheduling system
+- Conducted staff training and made recommendations to improve their technical practices
+- Built Data virtualization tool using Tableau and aggregated the data using SQL Clients PostgreSQL & SQL-Workbench"
+5,2008,2011,Healthcare,Business Analyst,"- Created a data reporting system to monitor the back offices such as finance, sales, and production departments. The system was connected to the back-end ERP (Navision) to gather data, and dynamically created several Excel reports.
+- Reported the significant change in dataset which was downloaded from a back-end database and then the cells inside the sheet were filled in and elaborated when our client required to do so.
+- Backed up some data from SQL Server into a local Microsoft Access database for more complex analysis and also let our client handle the dataset through various filters; Our  client could also print reports of his queries through the system I made.
+- Developed software that contained a real-time calendar with upcoming orders and displayed some KPI indicators to monitor the production process of hearing instruments."
+5,2012,2012,Tech,Data Analyst,"- Created a system to statistically analyze the data of labor market and dynamically created reports with KPI figures required by the client.
+- Wrote reports with VBA programming to dynamically gather data from the back-end MySQL database.
+- Created procedures and views in the MySQL back-end database to filter out any unnecessary data."
+5,2013,2016,Finance,Data Analyst,"- Implemented an automatic report generator in order to produce statistical reports for the European Commission with detailed data of payments.
+- Created software to replicate the legacy software used to calculate payments and check transactions.
+- Wrote several views and queries in an Oracle back-end database to retrieve payments information.
+- Created R scripts to sync a Pentaho repository with a Oracle database in order to align metadata and descriptions of every Pentaho report.
+- Developed a repository with specifications of Oracle views through interviews to different stakeholders."
+5,2016,2017,Finance,Quantitative Analyst (Financial Model Builder),"- Migrated the features of a complex financial model built with several huge Excel workbooks into 2 Python scripts to speed up calculation. My system decreased the time needed to analyze the data from more than 10 hours to a few minutes. These scripts also implement a quality check of the input data to assure reliable computation.
+- Implemented statistical analysis, linear regression, and machine learning to our service.
+- Performed time series analysis (OHLC and tick data).
+- Developed code in R and Python."
+5,2017,2020,Healthcare,Data Scientist,"- Built advanced Tableau dashboards for the University of Colorado, provided support to various Tableau users from the University, wrote Python ETL scripts, and served as a mentor during the University hackathon.
+- Handled the data cleaning and the entire design of the database architecture via several Python scripts and Jupyter notebooks.
+- Created a CRM data layer based on 1,000+ unstructured Excel and other data files using an automated parser in R.
+- Set up data visualization dashboards and reporting capabilities for a client.
+- Designed and developed a BI environment for a client.
+- Designed and developed data architecture for a startup based in Silicon Valley and got involved in the early stages as the tech lead."
+6,2013,2014,Finance,Analyst,"- Developed strong financial modelling and interpersonal skills
+- Covered European healthcare sector
+- Performed LBO analysis on a potential $70 million asset sale of a non-core business unit to the sponsors 
+- Constructed sensitivity tables showing changes in stock price, growth rates and EBITDA margins using Excel and VBA
+- Developed a novel method for achieving higher asset diversification within the context of optimal portfolio construction and implemented it using Excel"
+6,2015,2018,Finance,Analyst,"- Worked as a data scientist in marketing strategy department, mainly in charge of data mining and data-driven business strategy consulting
+- Provided intuitive and insightful information to management to let them understand the current situation and assisted management in crafting future strategy and plans
+- Delivered data-driven presentations to support senior stakeholders' decision-making process
+- Conducted and analyzed A/B experiments to discover opportunities for product growth
+- Redesigned the company’s strategic approach to billing that resulted in boosting revenue by 7% and reducing accounts receivable by 18%"
+6,2019,2020,Entertainment,Data Scientist,"- Client facing role within our marketing solution team supporting enterprise customers so that they could better understand their audiences, content trends, and advertising performance
+- Used visualization to determine the seasonal trends that reside in data and detected some abnormality
+- Defined metrics and business strategy for analyzing the performance of beta features
+- Analyze the data coming from oracle and worked with business users to develop the model
+- Created different KPI dashboards using a combination of the list, crosstab, graph and map reports
+- Performed user data mining for new insights and scientific publications"
