@@ -10,6 +10,8 @@ from sklearn.metrics import roc_auc_score, f1_score
 from keras.models import Model
 from keras.layers import Input, Dense, Embedding, SpatialDropout1D, concatenate
 from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, GlobalMaxPooling1D
+rom keras.layers import Input, Dense, Embedding, SpatialDropout1D, add, concatenate
+from keras.layers import CuDNNLSTM, Bidirectional, GlobalMaxPooling1D, GlobalAveragePooling1D, CuDNNGRU, Conv1D
 from keras.preprocessing import text, sequence
 from keras.callbacks import Callback
 from sklearn.preprocessing import LabelEncoder
@@ -42,7 +44,6 @@ y_train_onehot = onehot_encoder.fit_transform(reshaped)
 max_features = 30000
 maxlen = 100
 embed_size = 300
-num_folds = 10
 
 # Define per-fold score containers <-- these are new
 acc_per_fold = []
@@ -91,7 +92,7 @@ class Evaluation(Callback):
             print("\n f1 score - epoch: %d - score: %.6f \n" % (epoch + 1, score))
 
 
-def get_model():
+def get_gru_model():
     inp = Input(shape=(maxlen,))
     x = Embedding(nb_words, embed_size, weights=[embedding_matrix])(inp)
     x = SpatialDropout1D(0.2)(x)
@@ -105,33 +106,52 @@ def get_model():
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
+    return model
+
+BATCH_SIZE = 512
+LSTM_UNITS = 128
+DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
+EPOCHS = 4
+MAX_LEN = 220
+def get_gru_lstm_model(embedding_matrix):
+    words = Input(shape=(None,))
+    x = Embedding(*embedding_matrix.shape, weights=[embedding_matrix], trainable=False)(words)
+    x = SpatialDropout1D(0.2)(x)
+    x = Bidirectional(CuDNNGRU(LSTM_UNITS, return_sequences=True))(x)
+    x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
+
+    hidden = concatenate([
+        GlobalMaxPooling1D()(x),
+        GlobalAveragePooling1D()(x),
+    ])
+    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu')(hidden)])
+    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu')(hidden)])
+    result = Dense(4, activation='softmax')(hidden)
+
+    model = Model(inputs=words, outputs=result)
+    model.compile(loss='categorical_crossentropy', optimizer='adam')
 
     return model
 
 
-model = get_model()
+model = get_gru_model()
 print(model.summary())
 
-# batch_size = 32
-# epochs = 10
-# kf = KFold(n_splits=num_folds)
-# fold_no = 1
-# for train, val in kf.split(x_train, y_train_onehot):
-#     print('------------------------------------------------------------------------')
-#     print(f'Training for fold {fold_no}/{num_folds} ...')
-#     # X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
-#     eval_score = Evaluation(validation_data=(x_train[val], y_train_onehot[val]), interval=1)
-#
-#     hist = model.fit(x_train[train], y_train_onehot[train], batch_size=batch_size, epochs=epochs,
-#                      validation_data=(x_train[val], y_train_onehot[val]),
-#                      callbacks=[eval_score], verbose=2)
-#     fold_no += 1
+batch_size = 32
+epochs = 10
+num_folds = 5
+kf = KFold(n_splits=num_folds)
+fold_no = 1
+for train, val in kf.split(x_train, y_train_onehot):
+    print('------------------------------------------------------------------------')
+    print(f'Training for fold {fold_no}/{num_folds} ...')
+    # X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
+    eval_score = Evaluation(validation_data=(x_train[val], y_train_onehot[val]), interval=1)
 
-estimator = KerasClassifier(build_fn=get_model, epochs=2, batch_size=16, verbose=2)
-kfold = KFold(n_splits=5, shuffle=True)
-results = cross_val_score(estimator, x_train, y_train_onehot, cv=kfold)
-print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
-
+    hist = model.fit(x_train[train], y_train_onehot[train], batch_size=batch_size, epochs=epochs,
+                     validation_data=(x_train[val], y_train_onehot[val]),
+                     callbacks=[eval_score], verbose=2)
+    fold_no += 1
 
 y_pred = model.predict(x_test, batch_size=1024)
 pred = np.argmax(y_pred, 1)
