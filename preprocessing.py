@@ -5,6 +5,15 @@ Created date: 2020/08/05
 """
 import re
 import logging
+import numpy as np
+import matplotlib.pyplot as plt
+
+import gc
+from keras import backend as K
+
+from nltk.tokenize import TweetTokenizer
+
+from unidecode import unidecode
 
 import numpy as np
 import pandas as pd
@@ -159,6 +168,128 @@ def get_iterator(dataset, batch_size, device=0, train=True, shuffle=True, repeat
         sort=False
     )
     return dataset_iter
+
+
+"""
+NORMALIZATION
+"""
+
+length_threshold = 20000  # We are going to truncate a comment if its length > threshold
+word_count_threshold = 900  # We are going to truncate a comment if it has more words than our threshold
+words_limit = 310000
+# We will filter all characters except alphabet characters and some punctuation
+valid_characters = " " + "@$" + "'!?-" + "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
+valid_characters_ext = valid_characters + "abcdefghijklmnopqrstuvwxyz".upper()
+valid_set = set(x for x in valid_characters)
+valid_set_ext = set(x for x in valid_characters_ext)
+cat1_words = []
+cat2_words = []
+cont_patterns = [
+    (r'(W|w)on\'t', r'will not'),
+    (r'(C|c)an\'t', r'can not'),
+    (r'(I|i)\'m', r'i am'),
+    (r'(A|a)in\'t', r'is not'),
+    (r'(\w+)\'ll', r'\g<1> will'),
+    (r'(\w+)n\'t', r'\g<1> not'),
+    (r'(\w+)\'ve', r'\g<1> have'),
+    (r'(\w+)\'s', r'\g<1> is'),
+    (r'(\w+)\'re', r'\g<1> are'),
+    (r'(\w+)\'d', r'\g<1> would'),
+]
+patterns = [(re.compile(regex), repl) for (regex, repl) in cont_patterns]
+
+
+def split_word(word, toxic_words):
+    if word == "":
+        return ""
+
+    lower = word.lower()
+    for toxic_word in toxic_words:
+        start = lower.find(toxic_word)
+        if start >= 0:
+            end = start + len(toxic_word)
+            result = " ".join([word[0:start], word[start:end], split_word(word[end:], toxic_words)])
+            return result.replace("  ", " ").strip()
+    return word
+
+
+tknzr = TweetTokenizer(strip_handles=False, reduce_len=True)
+
+
+def word_tokenize(sentence):
+    sentence = sentence.replace("$", "s")
+    sentence = sentence.replace("@", "a")
+    sentence = sentence.replace("!", " ! ")
+    sentence = sentence.replace("?", " ? ")
+
+    return tknzr.tokenize(sentence)
+
+
+def replace_url(word):
+    if "http://" in word or "www." in word or "https://" in word or "wikipedia.org" in word:
+        return ""
+    return word
+
+
+def normalize_by_dictionary(normalized_word, dictionary):
+    result = []
+    for word in normalized_word.split():
+        if word == word.upper():
+            if word.lower() in dictionary:
+                result.append(dictionary[word.lower()].upper())
+            else:
+                result.append(word)
+        else:
+            if word.lower() in dictionary:
+                result.append(dictionary[word.lower()])
+            else:
+                result.append(word)
+
+    return " ".join(result)
+
+
+from spacy.symbols import nsubj, VERB, dobj
+import spacy
+
+nlp = spacy.load('en')
+
+
+def normalize_comment(comment):
+    comment = unidecode(comment)
+    comment = comment[:length_threshold]
+
+    normalized_words = []
+
+    for word in word_tokenize(comment):
+        # for (pattern, repl) in patterns:
+        #    word = re.sub(pattern, repl, word)
+
+        if word == "." or word == ",":
+            normalized_words.append(word)
+            continue
+
+        word = replace_url(word)
+        if word.count(".") == 1:
+            word = word.replace(".", " ")
+        filtered_word = "".join([x for x in word if x in valid_set])
+
+        # Kind of hack: for every word check if it has a toxic word as a part of it
+        # If so, split this word by swear and non-swear part.
+        normalized_word = split_word(filtered_word, cat1_words)
+        normalized_word = normalize_by_dictionary(normalized_word, cat2_words)
+
+        normalized_words.append(normalized_word)
+
+    normalized_comment = " ".join(normalized_words)
+
+    result = []
+    for word in normalized_comment.split():
+        if word.upper() == word:
+            result.append(word)
+        else:
+            result.append(word.lower())
+
+    return result
 
 
 def preprocessing(file_path):
