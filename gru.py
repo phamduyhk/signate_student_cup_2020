@@ -134,12 +134,17 @@ def get_gru_lstm_model(embedding_matrix):
 
     return model
 
+model_type = "gru_lstm"
+if model_type is "gru_stlm":
+    model = get_gru_lstm_model(embedding_matrix)
+    if os.path.exists("grulstm_param.hdf5"):
+        model.load_weights("grulstm_param.hdf5")
+elif model_type is "gru":
+    model = get_gru_model()
+    if os.path.exists("gru_param.hdf5"):
+        model.load_weights("gru_param.hdf5")
 
-# model = get_gru_lstm_model(embedding_matrix)
-model = get_gru_model()
 print(model.summary())
-if os.path.exists("grulstm_param.hdf5"):
-    model.load_weights("grulstm_param.hdf5")
 
 batch_size = 32
 epochs = 5
@@ -156,7 +161,10 @@ for train, val in kf.split(x_train, y_train_onehot):
                      validation_data=(x_train[val], y_train_onehot[val]),
                      callbacks=[eval_score], verbose=2)
     fold_no += 1
-model.save_weights("grulstm_param.hdf5")
+if model_type is "gru_lstm":
+    model.save_weights("grulstm_param.hdf5")
+elif model_type is "gru":
+    model.save_weights("gru.hdf5")
 y_pred = model.predict(x_test, batch_size=1024)
 pred = np.argmax(y_pred, 1)
 submission.iloc[:, 1] = pred + 1
