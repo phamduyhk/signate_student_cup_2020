@@ -356,7 +356,7 @@ def main():
             [val_input_ids, val_input_masks, val_segment_ids],
             val_labels,
         ),
-        epochs=1,
+        epochs=2,
         batch_size=32,
     )
 
