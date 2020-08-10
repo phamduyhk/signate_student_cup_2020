@@ -41,9 +41,10 @@ train = pd.read_csv('data/train.csv')
 test = pd.read_csv('data/test.csv')
 submission = pd.read_csv('data/submit_sample.csv', header=None)
 
-X_train = train["description"].fillna("fillna").values
+X_train = train["description"].fillna("fillna").tolist()
 y_train = train["jobflag"].values
 X_test = test["description"].fillna("fillna").values
+
 
 onehot_encoder = OneHotEncoder(sparse=False)
 reshaped = y_train.reshape(len(y_train), 1)
@@ -54,30 +55,15 @@ max_features = 30000
 maxlen = 100
 embed_size = 300
 
-# Define per-fold score containers <-- these are new
-acc_per_fold = []
-loss_per_fold = []
-
-tokenizer = text.Tokenizer(num_words=max_features)
-tokenizer.fit_on_texts(list(X_train) + list(X_test))
-sentence = X_train[0]
-np_normalize = np.vectorize(normalize_comment)
-normalized_X_train = np_normalize(X_train)
-X_train = tokenizer.texts_to_sequences(normalized_X_train)
-X_test = tokenizer.texts_to_sequences(X_test)
-print(X_train[0])
-x_train = sequence.pad_sequences(X_train, maxlen=maxlen)
-x_test = sequence.pad_sequences(X_test, maxlen=maxlen)
-
-print(tokenizer)
-
-print(x_train[0])
-
-
-
 model = BertModel.from_pretrained('bert-base-uncased')
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-input_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0)
+
+num_added_toks = tokenizer.add_tokens(X_train)
+print('We have added', num_added_toks, 'tokens')
+model.resize_token_embeddings(len(tokenizer))
+
+input_ids = torch.tensor(tokenizer.encode(X_train, add_special_tokens=False)).unsqueeze(0)
+print(input_ids.shape)
 outputs = model(input_ids)
 last_hidden_states = outputs[0]
 
@@ -93,3 +79,4 @@ print(last_hidden_states.size())
 # result = bert_embedding(sentence)
 # print(result)
 # print(result[0].shape)
+

@@ -182,8 +182,11 @@ valid_characters = " " + "@$" + "'!?-" + "abcdefghijklmnopqrstuvwxyz" + "abcdefg
 valid_characters_ext = valid_characters + "abcdefghijklmnopqrstuvwxyz".upper()
 valid_set = set(x for x in valid_characters)
 valid_set_ext = set(x for x in valid_characters_ext)
-cat1_words = []
-cat2_words = []
+# 1:Data scientist, 2:Machine learning engineer, 3:Software engineer, 4:Consultant）
+cat1_words = ["Data", "scientist", "science"]  #
+cat2_words = ["machine learning", "AI"]
+cat3_words = ["Software", "soft"]
+cat4_words = ["consultant"]
 cont_patterns = [
     (r'(W|w)on\'t', r'will not'),
     (r'(C|c)an\'t', r'can not'),
@@ -276,7 +279,9 @@ def normalize_comment(comment):
         # Kind of hack: for every word check if it has a toxic word as a part of it
         # If so, split this word by swear and non-swear part.
         normalized_word = split_word(filtered_word, cat1_words)
-        normalized_word = normalize_by_dictionary(normalized_word, cat2_words)
+        normalized_word = split_word(normalized_word, cat2_words)
+        normalized_word = split_word(normalized_word, cat3_words)
+        normalized_word = split_word(normalized_word, cat4_words)
 
         normalized_words.append(normalized_word)
 

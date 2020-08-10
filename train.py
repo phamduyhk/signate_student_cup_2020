@@ -9,7 +9,6 @@ import torch
 
 # preprocessing module
 from utils.dataloader import Preprocessing
-from preprocessing import get_iterator, get_dataset
 
 # Preliminaries
 
@@ -18,7 +17,8 @@ from torchtext.data import Field, TabularDataset, BucketIterator, Iterator
 # Models
 
 import torch.nn as nn
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import BertTokenizer, BertForSequenceClassification, BertModel
+import torch
 
 # Training
 
@@ -28,7 +28,6 @@ import torch.optim as optim
 
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
 import seaborn as sns
-from sklearn.model_selection import KFold, LeaveOneOut, StratifiedKFold
 
 preprocessor = Preprocessing()
 
@@ -47,7 +46,7 @@ text_field = Field(use_vocab=False, tokenize=tokenizer.encode, lower=False, incl
 fields = [('text', text_field), ('label', label_field)]
 
 # SETTINGs
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 destination_folder = "./output"
 if not os.path.exists(destination_folder):
     os.mkdir(destination_folder)
@@ -55,54 +54,80 @@ source_folder = "./data"
 
 # Get data (ver transformer)
 vector_list_file = "wiki-news-300d-1M.vec"
-max_sequence_length = 512
-batch_size = 128
+max_sequence_length = 1635
+batch_size = 16
+
+# TabularDataset Ver
+train_val_ds, test = TabularDataset.splits(path=source_folder, train='train_data.csv',
+                                           test='test_data.csv', format='CSV', fields=fields, skip_header=True)
+
+train, valid = train_val_ds.split(
+    split_ratio=0.8, random_state=random.seed(2395))
+
+train_iter = BucketIterator(train, batch_size=batch_size, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
+valid_iter = BucketIterator(valid, batch_size=batch_size, sort_key=lambda x: len(x.text),
+                            device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
+test_iter = Iterator(test, batch_size=batch_size, device=device, train=False, shuffle=False, sort=False)
 
 
-# # TabularDataset Ver
-# train_val_ds, test = TabularDataset.splits(path=source_folder, train='train_data.csv',
-#                                            test='test_data.csv', format='CSV', fields=fields, skip_header=True)
-#
-# train, valid = train_val_ds.split(
-#     split_ratio=0.7, random_state=random.seed(2395))
-#
-# # train_iter = BucketIterator(train, batch_size=batch_size, sort_key=lambda x: len(x.text),
-# #                             device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
-# # valid_iter = BucketIterator(valid, batch_size=batch_size, sort_key=lambda x: len(x.text),
-# #                             device=device, train=True, sort=True, sort_within_batch=True, shuffle=False)
-#
-#
-# train_iter = BucketIterator(train, batch_size=batch_size, device=device, train=True, shuffle=False)
-# valid_iter = BucketIterator(valid, batch_size=batch_size,
-#                             device=device, train=True, shuffle=False)
-# test_iter = Iterator(test, batch_size=batch_size, device=device, train=False, shuffle=False, sort=False)
-#
-# # k分割交差検証（k-fold cross-validation）
-# kf = KFold(n_splits=5, shuffle=True)
-# print(train_val_ds)
-# for train_index, test_index in kf.split(train_val_ds):
-#     print(train_index, test_index)
-#
-# # 一つ抜き交差検証（leave-one-out cross-validation）
-# loo = LeaveOneOut()
-# for train, test in loo.split(train_val_ds):
-#     print("train {}, test {}".format(train, test))
-#
-# # 層化k分割交差検証（stratified k-fold cross-validation）
-# skf = StratifiedKFold(n_splits=3)
-# for train, test in skf.split(train_val_ds):
-#     print("train {}, test {}".format(train, test))
+class GRUNet(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim, n_layers, drop_prob=0.2):
+        super(GRUNet, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+
+        self.gru = nn.GRU(input_dim, hidden_dim, n_layers, batch_first=True, dropout=drop_prob)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.relu = nn.ReLU()
+
+    def forward(self, x, h):
+        out, h = self.gru(x, h)
+        out = self.fc(self.relu(out[:, -1]))
+        return out, h
+
+    def init_hidden(self, batch_size):
+        weight = next(self.parameters()).data
+        hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
+        return hidden
+
+
+class LSTMNet(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim, n_layers, drop_prob=0.2):
+        super(LSTMNet, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+
+        self.lstm = nn.LSTM(input_dim, hidden_dim, n_layers, batch_first=True, dropout=drop_prob)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.relu = nn.ReLU()
+
+    def forward(self, x, h):
+        out, h = self.lstm(x, h)
+        out = self.fc(self.relu(out[:, -1]))
+        return out, h
+
+    def init_hidden(self, batch_size):
+        weight = next(self.parameters()).data
+        hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device),
+                  weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device))
+        return hidden
 
 
 class BERT(nn.Module):
 
     def __init__(self):
         super(BERT, self).__init__()
-
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         options_name = "bert-base-uncased"
+        self.model = BertModel.from_pretrained('bert-base-uncased')
         self.encoder = BertForSequenceClassification.from_pretrained(options_name, num_labels=4)
 
     def forward(self, text, label):
+        input_ids = torch.tensor(self.tokenizer.encode(text, add_special_tokens=False)).unsqueeze(0)
+        embedding = self.model(input_ids)
+        last_hidden_states = embedding[0]
+
         loss, text_fea = self.encoder(text, labels=label)[:2]
 
         return loss, text_fea
@@ -159,9 +184,11 @@ def load_metrics(load_path):
 def train(model,
           optimizer,
           criterion=nn.CrossEntropyLoss(),
-          file_path=destination_folder,
+          train_loader=train_iter,
+          valid_loader=valid_iter,
           num_epochs=100,
-          n_folds=5,
+          eval_every=len(train_iter) // 2,
+          file_path=destination_folder,
           best_valid_loss=float("Inf")):
     # initialize running values
     running_loss = 0.0
@@ -177,87 +204,72 @@ def train(model,
     # training loop
     model.train()
     for epoch in range(num_epochs):
-        train_val_generator, test_dataset = get_dataset(split_mode="KFold",
-                                                        fix_length=max_sequence_length, lower=True, vectors="fasttext.en.300d",
-                                                        n_folds=n_folds, seed=123
-                                                        )
-        for fold, (train_dataset, val_dataset) in enumerate(train_val_generator):
-            # training step
-            for batch in get_iterator(
-                    train_dataset, batch_size=batch_size, train=True,
-                    shuffle=True, repeat=False
-            ):
-                text = torch.transpose(batch.description.data, 0, 1)
-                labels = batch.jobflag
-                labels = labels.type(torch.LongTensor)
-                labels = labels.to(device)
-                text = text.type(torch.LongTensor)
-                text = text.to(device)
-                output = model(text, labels)
-                loss, pred = output
+        for (text, labels), _ in train_loader:
+            labels = labels.type(torch.LongTensor)
+            labels = labels.to(device)
+            text = text.type(torch.LongTensor)
+            text = text.to(device)
+            output = model(text, labels)
+            loss, pred = output
 
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-                # update running values
-                running_loss += loss.item()
-                label_cpu = labels.cpu()
-                pred_cpu = torch.argmax(pred, 1).cpu()
-                running_f1_score += f1_score(label_cpu, pred_cpu, average='macro')
-                global_step += 1
+            # update running values
+            running_loss += loss.item()
+            label_cpu = labels.cpu()
+            pred_cpu = torch.argmax(pred, 1).cpu()
+            running_f1_score += f1_score(label_cpu, pred_cpu, average='macro')
+            global_step += 1
 
             # evaluation step
-            model.eval()
-            with torch.no_grad():
-                # validation loop
-                for batch in get_iterator(
-                        val_dataset, batch_size=batch_size, train=True,
-                        shuffle=True, repeat=False
-                ):
-                    text = torch.transpose(batch.description.data, 0, 1)
-                    labels = batch.jobflag
-                    labels = labels.type(torch.LongTensor)
-                    labels = labels.to(device)
-                    text = text.type(torch.LongTensor)
-                    text = text.to(device)
-                    output = model(text, labels)
-                    loss, preds = output
+            if global_step % eval_every == 0:
+                model.eval()
+                with torch.no_grad():
 
-                    valid_running_loss += loss.item()
-                    labels_cpu = labels.cpu()
-                    preds_cpu = torch.argmax(preds, 1).cpu()
-                    valid_running_f1_score += f1_score(labels_cpu, preds_cpu, average='macro')
+                    # validation loop
+                    for (text, labels), _ in valid_loader:
+                        labels = labels.type(torch.LongTensor)
+                        labels = labels.to(device)
+                        text = text.type(torch.LongTensor)
+                        text = text.to(device)
+                        output = model(text, labels)
+                        loss, preds = output
 
-            # evaluation
-            average_train_loss = running_loss / len(train_dataset)
-            average_f1_score = running_f1_score / len(train_dataset)
-            average_valid_loss = valid_running_loss / len(val_dataset)
-            average_valid_f1_score = valid_running_f1_score / len(val_dataset)
-            train_loss_list.append(average_train_loss)
-            valid_loss_list.append(average_valid_loss)
-            valid_f1_score_list.append(average_f1_score)
-            global_steps_list.append(global_step)
+                        valid_running_loss += loss.item()
+                        labels_cpu = labels.cpu()
+                        preds_cpu = torch.argmax(preds, 1).cpu()
+                        valid_running_f1_score += f1_score(labels_cpu, preds_cpu, average='macro')
 
-            # resetting running values
-            running_loss = 0.0
-            running_f1_score = 0.0
-            valid_running_loss = 0.0
-            valid_running_f1_score = 0.0
-            model.train()
+                # evaluation
+                average_train_loss = running_loss / eval_every
+                average_f1_score = running_f1_score / eval_every
+                average_valid_loss = valid_running_loss / len(valid_loader)
+                average_valid_f1_score = valid_running_f1_score / len(valid_loader)
+                train_loss_list.append(average_train_loss)
+                valid_loss_list.append(average_valid_loss)
+                valid_f1_score_list.append(average_f1_score)
+                global_steps_list.append(global_step)
 
-            # print progress
-            print(
-                'Epoch [{}/{}], fold {}/{}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Train F1 Score: {:.4f}, Valid F1 Score: {:.4f}'
-                    .format(epoch + 1, num_epochs, fold, n_folds,
-                            average_train_loss, average_valid_loss, average_f1_score, average_valid_f1_score))
+                # resetting running values
+                running_loss = 0.0
+                running_f1_score = 0.0
+                valid_running_loss = 0.0
+                valid_running_f1_score = 0.0
+                model.train()
 
-            # checkpoint
-            if best_valid_loss > average_valid_loss:
-                best_valid_loss = average_valid_loss
-                save_checkpoint(file_path + '/' + 'model.pt', model, best_valid_loss)
-                save_metrics(file_path + '/' + 'metrics.pt', train_loss_list, valid_loss_list,
-                             global_steps_list)
+                # print progress
+                print(
+                    'Epoch [{}/{}], Step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}, Train F1 Score: {:.4f}, Valid F1 Score: {:.4f}'
+                        .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_loader),
+                                average_train_loss, average_valid_loss, average_f1_score, average_valid_f1_score))
+
+                # checkpoint
+                if best_valid_loss > average_valid_loss:
+                    best_valid_loss = average_valid_loss
+                    save_checkpoint(file_path + '/' + 'model.pt', model, best_valid_loss)
+                    save_metrics(file_path + '/' + 'metrics.pt', train_loss_list, valid_loss_list, global_steps_list)
 
     save_metrics(file_path + '/' + 'metrics.pt', train_loss_list, valid_loss_list, global_steps_list)
     print('Finished Training!')

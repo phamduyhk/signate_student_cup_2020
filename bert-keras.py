@@ -166,7 +166,7 @@ class BertLayer(tf.keras.layers.Layer):
             **kwargs,
     ):
         self.n_fine_tune_layers = n_fine_tune_layers
-        self.trainable = True
+        self.trainable = False
         self.output_size = 768
         self.pooling = pooling
         self.bert_path = bert_path
@@ -257,7 +257,7 @@ def build_model(max_seq_length):
     in_segment = tf.keras.layers.Input(shape=(max_seq_length,), name="segment_ids")
     bert_inputs = [in_id, in_mask, in_segment]
 
-    bert_output = BertLayer(n_fine_tune_layers=3, pooling="mean")(bert_inputs)
+    bert_output = BertLayer(n_fine_tune_layers=1, pooling="mean")(bert_inputs)
     # Reshape bert_output before passing it the GRU
     bert_output = tf.keras.layers.Reshape((max_seq_length, embedding_size))(bert_output)
 
@@ -285,7 +285,7 @@ def initialize_vars(sess):
 def main():
     # Params for bert model and tokenization
     bert_path = "https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
-    max_seq_length = 256
+    max_seq_length = 512
 
     train_df, test_df = load_datasets()
 
@@ -356,14 +356,17 @@ def main():
             [val_input_ids, val_input_masks, val_segment_ids],
             val_labels,
         ),
-        epochs=2,
-        batch_size=32,
+        epochs=1,
+        batch_size=128,
     )
 
     pred = model.predict([test_input_ids,
                           test_input_masks,
                           test_segment_ids])
-    print(pred)
+    pred = np.argmax(pred, 1)
+    submission = pd.read_csv("data/submit_sample.csv", header=None)
+    submission.iloc[:, 1] = pred + 1
+    submission.to_csv('submission.csv', index=False, header=None)
 
 
 if __name__ == "__main__":
