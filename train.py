@@ -143,8 +143,8 @@ class BERT(nn.Module):
 
 
         # freeze_bert
-        for param in self.model.parameters():
-            param.requires_grad = False
+        # for param in self.model.parameters():
+        #     param.requires_grad = False
 
     def forward(self, text, label):
         embedding = self.model(text)
@@ -215,7 +215,7 @@ def train(model,
           loss_function=nn.CrossEntropyLoss(),
           train_loader=train_iter,
           valid_loader=valid_iter,
-          num_epochs=100,
+          num_epochs=5,
           eval_every=len(train_iter) // 2,
           file_path=destination_folder,
           best_valid_loss=float("Inf")):
