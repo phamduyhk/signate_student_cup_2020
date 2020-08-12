@@ -138,6 +138,10 @@ class BERT(nn.Module):
         self.relu = nn.ReLU()
         self.linear = nn.Linear(2*output_dim, num_labels)
 
+        nn.init.normal_(self.linear.weight, std=0.02)
+        nn.init.zeros_(self.linear.bias)
+
+
         # freeze_bert
         for param in self.model.parameters():
             param.requires_grad = False
