@@ -43,7 +43,7 @@ TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-base-uncased'
-TRAIN_BATCH_SIZE = 256
+TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
@@ -52,7 +52,7 @@ MAX_LENGTH = 128
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
-    
+
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
     df["jobflag"] = df["jobflag"] - 1
@@ -90,17 +90,17 @@ class Classifier(nn.Module):
         self.bert = AutoModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(0.1)
         # for bert only
-        self.linear = nn.Linear(embedding_dim, num_classes)
+        # self.linear = nn.Linear(embedding_dim, num_classes)
 
         self.gru = nn.GRU(embedding_dim, hidden_dim, n_layers,
-                          batch_first=True, dropout=drop_prob)
+                          batch_first=False, dropout=drop_prob)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim, n_layers,
-                            batch_first=True, dropout=drop_prob)
+                            batch_first=False, dropout=drop_prob)
 
         self.fc = nn.Linear(hidden_dim, output_dim)
         self.relu = nn.ReLU()
         # for bert-gru-lstm
-        # self.linear = nn.Linear(2*output_dim, num_classes)
+        self.linear = nn.Linear(2*output_dim, num_classes)
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
@@ -112,18 +112,19 @@ class Classifier(nn.Module):
             token_type_ids=token_type_ids)
         output = output[:, 0, :]
 
-        # x = self.dropout(output)
-        # gru, h_gru = self.gru(x)
-        # gru = self.fc(self.relu(gru[:, -1]))
-        # lstm, h_lstm = self.lstm(x)
-        # lstm = self.fc(self.relu(lstm[:, -1]))
-        # concatenate = torch.cat(
-        #     (gru, lstm), 1)
-        # output = self.linear(self.relu(concatenate))
+        x = self.dropout(output)
+        print(x.size())
+        gru, h_gru = self.gru(x)
+        gru = self.fc(self.relu(gru[:, -1]))
+        lstm, h_lstm = self.lstm(x)
+        lstm = self.fc(self.relu(lstm[:, -1]))
+        concatenate = torch.cat(
+            (gru, lstm), 1)
+        output = self.linear(self.relu(concatenate))
 
         #   # for bert only
-        output = self.dropout(output)
-        output = self.linear(output)
+        # output = self.dropout(output)
+        # output = self.linear(output)
         return output
 
 
@@ -318,6 +319,8 @@ for i, f1 in enumerate(f1_scores):
     line = f"fold={i}: {f1}\n"
     lines += line
 lines += f"CV    : {cv}"
+if not os.path.exists("./result"):
+    os.mkdir("./result")
 with open(f"./result/{MODEL_NAME}_result.txt", mode='w') as f:
     f.write(lines)
 
@@ -359,6 +362,8 @@ with torch.no_grad():
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
+if not os.path.exists("./output"):
+    os.mkdir("./output")
 try:
     submit.to_csv("./output/submission_cv{}.csv".format(str(cv).replace(".", "")[:10]), index=False, header=False)
 except NameError:
