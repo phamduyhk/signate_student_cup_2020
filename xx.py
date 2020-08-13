@@ -90,7 +90,7 @@ class Classifier(nn.Module):
         self.bert = AutoModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(0.1)
         # for bert only
-        # self.linear = nn.Linear(embedding_dim, num_classes)
+        self.linear = nn.Linear(embedding_dim, num_classes)
 
         self.gru = nn.GRU(embedding_dim, hidden_dim, n_layers,
                           batch_first=False, dropout=drop_prob)
@@ -100,7 +100,7 @@ class Classifier(nn.Module):
         self.fc = nn.Linear(hidden_dim, output_dim)
         self.relu = nn.ReLU()
         # for bert-gru-lstm
-        self.linear = nn.Linear(2*output_dim, num_classes)
+        # self.linear = nn.Linear(2*output_dim, num_classes)
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
@@ -112,19 +112,19 @@ class Classifier(nn.Module):
             token_type_ids=token_type_ids)
         output = output[:, 0, :]
 
-        x = self.dropout(output)
-        print(x.size())
-        gru, h_gru = self.gru(x)
-        gru = self.fc(self.relu(gru[:, -1]))
-        lstm, h_lstm = self.lstm(x)
-        lstm = self.fc(self.relu(lstm[:, -1]))
-        concatenate = torch.cat(
-            (gru, lstm), 1)
-        output = self.linear(self.relu(concatenate))
+        # x = self.dropout(output)
+        # print(x.size())
+        # gru, h_gru = self.gru(x)
+        # gru = self.fc(self.relu(gru[:, -1]))
+        # lstm, h_lstm = self.lstm(x)
+        # lstm = self.fc(self.relu(lstm[:, -1]))
+        # concatenate = torch.cat(
+        #     (gru, lstm), 1)
+        # output = self.linear(self.relu(concatenate))
 
         #   # for bert only
-        # output = self.dropout(output)
-        # output = self.linear(output)
+        output = self.dropout(output)
+        output = self.linear(output)
         return output
 
 
