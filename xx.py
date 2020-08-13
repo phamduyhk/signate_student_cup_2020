@@ -283,9 +283,9 @@ def trainer(fold, df):
         valid_accs.append(valid_acc)
         valid_f1s.append(valid_f1)
 
-        plot_training(train_losses, train_accs, train_f1s,
-                      valid_losses, valid_accs, valid_f1s,
-                      epoch, fold)
+        # plot_training(train_losses, train_accs, train_f1s,
+        #               valid_losses, valid_accs, valid_f1s,
+        #               epoch, fold)
 
         best_loss = valid_loss if valid_loss < best_loss else best_loss
         besl_acc = valid_acc if valid_acc > best_acc else best_acc
