@@ -50,6 +50,9 @@ EPOCHS = 5
 NUM_SPLITS = 5
 MAX_LENGTH = 128
 
+if not os.path.exists(MODELS_DIR):
+    os.mkdir(MODELS_DIR)
+    
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
     df["jobflag"] = df["jobflag"] - 1
