@@ -42,8 +42,8 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'xlnet-base-cased'
-TRAIN_BATCH_SIZE = 128
+MODEL_NAME = 'albert-xxlarge-v2'
+TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 10
@@ -111,7 +111,9 @@ class Classifier(nn.Module):
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
+        print(output.size())
         output = output[:, 0, :]
+        print(output.size())
 
         # x = self.dropout(output)
         # gru, h_gru = self.gru(x)
