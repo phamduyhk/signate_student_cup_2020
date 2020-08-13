@@ -42,13 +42,13 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'bert-base-uncased'
+MODEL_NAME = 'bert-base-cased'
 TRAIN_BATCH_SIZE = 128
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 5
+EPOCHS = 10
 NUM_SPLITS = 5
-MAX_LENGTH = 128
+MAX_LENGTH = 256
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
@@ -100,7 +100,7 @@ class Classifier(nn.Module):
         self.fc = nn.Linear(hidden_dim, output_dim)
         self.relu = nn.ReLU()
         # for bert-gru-lstm
-        self.linear = nn.Linear(2*output_dim, num_classes)
+        # self.linear = nn.Linear(2*output_dim, num_classes)
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
@@ -111,20 +111,20 @@ class Classifier(nn.Module):
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
-        # output = output[:, 0, :]
+        output = output[:, 0, :]
 
-        x = self.dropout(output)
-        gru, h_gru = self.gru(x)
-        gru = self.fc(self.relu(gru[:, -1]))
-        lstm, h_lstm = self.lstm(x)
-        lstm = self.fc(self.relu(lstm[:, -1]))
-        concatenate = torch.cat(
-            (gru, lstm), 1)
-        output = self.linear(self.relu(concatenate))
+        # x = self.dropout(output)
+        # gru, h_gru = self.gru(x)
+        # gru = self.fc(self.relu(gru[:, -1]))
+        # lstm, h_lstm = self.lstm(x)
+        # lstm = self.fc(self.relu(lstm[:, -1]))
+        # concatenate = torch.cat(
+        #     (gru, lstm), 1)
+        # output = self.linear(self.relu(concatenate))
 
         #   # for bert only
-        # output = self.dropout(output)
-        # output = self.linear(output)
+        output = self.dropout(output)
+        output = self.linear(output)
         return output
 
 
