@@ -114,7 +114,6 @@ class Classifier(nn.Module):
         # output = output[:, 0, :]
 
         x = self.dropout(output)
-        print(x.size())
         gru, h_gru = self.gru(x)
         gru = self.fc(self.relu(gru[:, -1]))
         lstm, h_lstm = self.lstm(x)
