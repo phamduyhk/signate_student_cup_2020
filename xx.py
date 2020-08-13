@@ -43,12 +43,12 @@ TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'albert-xxlarge-v2'
-TRAIN_BATCH_SIZE = 1
+TRAIN_BATCH_SIZE = 64
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 10
 NUM_SPLITS = 5
-MAX_LENGTH = 256
+MAX_LENGTH = 128
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
