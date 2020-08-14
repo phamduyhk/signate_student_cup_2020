@@ -42,7 +42,7 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'albert-xxlarge-v2'
+MODEL_NAME = 'bert-base-cased'
 TRAIN_BATCH_SIZE = 64
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
@@ -111,9 +111,7 @@ class Classifier(nn.Module):
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
-        print(output.size())
         output = output[:, 0, :]
-        print(output.size())
 
         # x = self.dropout(output)
         # gru, h_gru = self.gru(x)
@@ -341,10 +339,11 @@ test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(
     test_dataset, batch_size=VALID_BATCH_SIZE, shuffle=False)
 
+final_prob = []
+final_output = []
 with torch.no_grad():
     progress = tqdm(test_dataloader, total=len(test_dataloader))
-    final_output = []
-
+ 
     for batch in progress:
         progress.set_description("<Test>")
 
@@ -357,17 +356,19 @@ with torch.no_grad():
 
         outputs = sum(outputs) / len(outputs)
         outputs = torch.softmax(outputs, dim=1).cpu().detach().tolist()
+        final_prob.extend(outputs)
         outputs = np.argmax(outputs, axis=1)
-
+        
         final_output.extend(outputs)
 
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
+submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/submission_cv{}.csv".format(str(cv).replace(".", "")[:10]), index=False, header=False)
+    submit.to_csv("./output/prob_{}_{}_{}ep.csv".format(str(MODEL_NAME),str(MAX_LENGTH),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
