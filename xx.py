@@ -42,28 +42,30 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'xlnet-large-cased'
+MODEL_NAME = 'bert-large-cased'
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 4
-NUM_SPLITS = 5
+EPOCHS = 5
+NUM_SPLITS = 10
 MAX_LENGTH = 256
+LEARNING_RATE = 2e-5
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
 
-def preprocessing_text(df):
+
+def preprocessing_text(df, is_train=True):
     remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
 
     for i, line in enumerate(df['description']):
         for r in remove_list:
             df['description'][i] = df['description'][i].replace(r, "")
     # remove duplicated rows
-    df = df.drop_duplicates(subset=['description'])
+    if is_train:
+        df = df.drop_duplicates(subset=['description'])
 
     return df
-
 
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
@@ -272,7 +274,7 @@ def trainer(fold, df):
     model = model.to(DEVICE)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = AdamW(model.parameters(), lr=5e-4)
+    optimizer = AdamW(model.parameters(), lr=LEARNING_RATE)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100000, gamma=1.0)
     # ダミーのスケジューラー
 
@@ -347,6 +349,7 @@ for fold in range(NUM_SPLITS):
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
+test_df = preprocessing_text(test_df, is_train=False)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(

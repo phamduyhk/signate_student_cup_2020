@@ -42,17 +42,18 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'roberta-large'
+MODEL_NAME = 'albert-xxlarge-v2'
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
 NUM_SPLITS = 10
 MAX_LENGTH = 256
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 2e-5
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
+
 
 def preprocessing_text(df, is_train=True):
     remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
@@ -88,7 +89,7 @@ def make_dataset(df, tokenizer, device):
                                   truncation=True,
                                   max_length=MAX_LENGTH))
     dataset.set_format(type='torch',
-                       columns=['input_ids', 'attention_mask', 'labels'],
+                       columns=['input_ids', 'token_type_ids', 'attention_mask', 'labels'],
                        device=device)
     return dataset
 
@@ -96,7 +97,7 @@ def make_dataset(df, tokenizer, device):
 class Classifier(nn.Module):
     def __init__(self, model_name, num_classes=4):
         super().__init__()
-        embedding_dim = 1024
+        embedding_dim = 4096
         hidden_dim = 160
         n_layers = 2
         output_dim = 128
@@ -119,10 +120,11 @@ class Classifier(nn.Module):
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, token_type_ids):
         output, _ = self.bert(
             input_ids=input_ids,
-            attention_mask=attention_mask)
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids)
 
         output = output[:, 0, :]
 
@@ -153,13 +155,13 @@ def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
     for i, batch in enumerate(progress):
         progress.set_description(f"<Train> Epoch{epoch + 1}")
 
-        attention_mask, input_ids, labels = batch.values()
+        attention_mask, input_ids, labels, token_type_ids = batch.values()
         del batch
 
         optimizer.zero_grad()
 
-        outputs = model(input_ids, attention_mask)
-        del input_ids, attention_mask
+        outputs = model(input_ids, attention_mask, token_type_ids)
+        del input_ids, attention_mask, token_type_ids
         loss = criterion(outputs, labels)  # 損失を計算
         _, preds = torch.max(outputs, 1)  # ラベルを予測
         del outputs
@@ -198,11 +200,11 @@ def eval_fn(dataloader, model, criterion, device, epoch):
         for i, batch in enumerate(progress):
             progress.set_description(f"<Valid> Epoch{epoch + 1}")
 
-            attention_mask, input_ids, labels = batch.values()
+            attention_mask, input_ids, labels, token_type_ids = batch.values()
             del batch
 
-            outputs = model(input_ids, attention_mask)
-            del input_ids, attention_mask
+            outputs = model(input_ids, attention_mask, token_type_ids)
+            del input_ids, attention_mask, token_type_ids
             loss = criterion(outputs, labels)
             _, preds = torch.max(outputs, 1)
             del outputs
@@ -361,11 +363,11 @@ with torch.no_grad():
     for batch in progress:
         progress.set_description("<Test>")
 
-        attention_mask, input_ids, labels = batch.values()
+        attention_mask, input_ids, labels, token_type_ids = batch.values()
 
         outputs = []
         for model in models:
-            output = model(input_ids, attention_mask)
+            output = model(input_ids, attention_mask, token_type_ids)
             outputs.append(output)
 
         outputs = sum(outputs) / len(outputs)
