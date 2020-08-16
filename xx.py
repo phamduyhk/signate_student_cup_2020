@@ -42,13 +42,13 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'bert-base-cased'
-TRAIN_BATCH_SIZE = 64
+MODEL_NAME = 'xlnet-large-cased'
+TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 10
+EPOCHS = 4
 NUM_SPLITS = 5
-MAX_LENGTH = 512
+MAX_LENGTH = 256
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
@@ -82,13 +82,13 @@ def make_dataset(df, tokenizer, device):
 class Classifier(nn.Module):
     def __init__(self, model_name, num_classes=4):
         super().__init__()
-        embedding_dim = 768
+        embedding_dim = 1024
         hidden_dim = 160
         n_layers = 2
         output_dim = 128
         drop_prob = 0.2
         self.bert = AutoModel.from_pretrained(model_name)
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(drop_prob)
         # for bert only
         self.linear = nn.Linear(embedding_dim, num_classes)
 
@@ -259,7 +259,7 @@ def trainer(fold, df):
     model = model.to(DEVICE)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = AdamW(model.parameters(), lr=2e-5)
+    optimizer = AdamW(model.parameters(), lr=5e-4)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100000, gamma=1.0)
     # ダミーのスケジューラー
 
