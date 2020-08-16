@@ -29,8 +29,8 @@ from preprocessing import normalize_comment
 
 os.environ['OMP_NUM_THREADS'] = '4'
 
-# EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
-EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
+EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
+# EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
 
 train = pd.read_csv('data/train.csv')
 test = pd.read_csv('data/test.csv')
@@ -47,7 +47,7 @@ label_count = {'1': 0, '2': 0, '3': 0, '4': 0}
 # {'1': 624, '2': 348, '3': 1376, '4': 583}
 for i, v in enumerate(y_train):
     if v == 1:
-        if label_count['1'] <= 500:
+        if label_count['1'] <= 340:
             y_tra.append(v)
             X_tra.append(X_train[i])
             label_count['1'] += 1
@@ -56,7 +56,7 @@ for i, v in enumerate(y_train):
             X_val.append(X_train[i])
             label_count['1'] += 1
     if v == 2:
-        if label_count['2'] <= 300:
+        if label_count['2'] <= 340:
             y_tra.append(v)
             X_tra.append(X_train[i])
             label_count['2'] += 1
@@ -65,7 +65,7 @@ for i, v in enumerate(y_train):
             X_val.append(X_train[i])
             label_count['2'] += 1
     if v == 3:
-        if label_count['3'] <= 500:
+        if label_count['3'] <= 340:
             y_tra.append(v)
             X_tra.append(X_train[i])
             label_count['3'] += 1
@@ -74,7 +74,7 @@ for i, v in enumerate(y_train):
             X_val.append(X_train[i])
             label_count['3'] += 1
     if v == 4:
-        if label_count['4'] <= 500:
+        if label_count['4'] <= 340:
             y_tra.append(v)
             X_tra.append(X_train[i])
             label_count['4'] += 1
@@ -151,6 +151,9 @@ for word, i in word_index.items():
     embedding_vector = embeddings_index.get(word)
     if embedding_vector is not None:
         embedding_matrix[i] = embedding_vector
+
+print(embedding_matrix.size) # (30000, 300)
+
 
 
 class Evaluation(Callback):
@@ -274,7 +277,7 @@ def train_with_cv(batch_size=32, epochs=10, num_folds=5):
     y_pred = model.predict(x_test, batch_size=1024)
     pred = np.argmax(y_pred, 1)
     submission.iloc[:, 1] = pred + 1
-    submission.to_csv('submission.csv', index=False, header=None)
+    submission.to_csv('./output/grulstm_{}ep_{}cv.csv'.format(epochs, num_folds), index=False, header=None)
 
 
 def train(batch_size=32, epochs=10):
@@ -286,6 +289,7 @@ def train(batch_size=32, epochs=10):
     X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
     print(y_tra.shape)
     print(y_val.shape)
+    print(X_tra)
     eval_score = Evaluation(validation_data=(X_val, y_val), interval=1)
     hist = model.fit(X_tra, y_tra, batch_size=batch_size, epochs=epochs, validation_data=(X_val, y_val),
                      callbacks=[eval_score], verbose=2)
@@ -299,5 +303,5 @@ def train(batch_size=32, epochs=10):
 
 batch_size = 32
 epochs = 10
-train(batch_size=batch_size, epochs=epochs)
+train_with_cv(batch_size=batch_size, epochs=epochs)
 # train_with_LGBM()
