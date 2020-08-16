@@ -53,8 +53,21 @@ MAX_LENGTH = 256
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
 
+def preprocessing_text(df):
+    remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
+
+    for i, line in enumerate(df['description']):
+        for r in remove_list:
+            df['description'][i] = df['description'][i].replace(r, "")
+    # remove duplicated rows
+    df = df.drop_duplicates(subset=['description'])
+
+    return df
+
+
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
+    df = preprocessing_text(df)
     df["jobflag"] = df["jobflag"] - 1
     df["kfold"] = np.nan
     df = df.rename(columns={'jobflag': 'labels'})
