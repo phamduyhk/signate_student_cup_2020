@@ -384,7 +384,7 @@ submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/prob_{}_{}_{}ep.csv".format(str(MODEL_NAME),str(MAX_LENGTH),str(EPOCHS)), index=False, header=False)
+    submit.to_csv("./output/prob_{}_{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
