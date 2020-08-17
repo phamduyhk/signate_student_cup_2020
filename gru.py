@@ -32,8 +32,23 @@ os.environ['OMP_NUM_THREADS'] = '4'
 EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
 # EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
 
+
+def preprocessing_text(df, is_train=True):
+    remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
+
+    for i, line in enumerate(df['description']):
+        for r in remove_list:
+            df['description'][i] = df['description'][i].replace(r, "")
+    # remove duplicated rows
+    if is_train:
+        df = df.drop_duplicates(subset=['description'])
+
+    return df
+
 train = pd.read_csv('data/train.csv')
+train = preprocessing_text(train)
 test = pd.read_csv('data/test.csv')
+test = preprocessing_text(test, is_train=False)
 submission = pd.read_csv('data/submit_sample.csv', header=None)
 
 X_train = train["description"].fillna("fillna").values
@@ -252,7 +267,7 @@ def train_with_LGBM():
     print("CV score:", np.mean(scores))
 
 
-def train_with_cv(batch_size=32, epochs=10, num_folds=5):
+def train_with_cv(batch_size=32, epochs=5, num_folds=10):
     """
     Training with cv
     Returns:
@@ -301,7 +316,7 @@ def train(batch_size=32, epochs=10):
     return hist
 
 
-batch_size = 32
-epochs = 10
+batch_size = 128
+epochs = 5
 train_with_cv(batch_size=batch_size, epochs=epochs)
 # train_with_LGBM()
