@@ -82,11 +82,11 @@ def make_folded_df(csv_file, num_splits=5):
             df.iat[i, 3] = 0 # valid data
         for i in indices_train:
             df.iat[i, 3] = 1 # train data
-
-    skfold = StratifiedKFold(num_splits, shuffle=True, random_state=SEED)
-    for fold, (_, valid_indexes) in enumerate(skfold.split(range(len(label)), label)):
-        for i in valid_indexes:
-            df.iat[i, 3] = fold
+    else:
+        skfold = StratifiedKFold(num_splits, shuffle=True, random_state=SEED)
+        for fold, (_, valid_indexes) in enumerate(skfold.split(range(len(label)), label)):
+            for i in valid_indexes:
+                df.iat[i, 3] = fold
     return df
 
 def make_dataset(df, tokenizer, device):
