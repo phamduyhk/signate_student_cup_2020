@@ -4,7 +4,7 @@ import collections
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import classification_report, f1_score, confusion_matrix
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
@@ -38,7 +38,7 @@ if torch.cuda.is_available():
     current_device = torch.cuda.current_device()
     print("Device:", torch.cuda.get_device_name(current_device))
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
@@ -47,9 +47,9 @@ TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
-NUM_SPLITS = 10
+NUM_SPLITS = 1
 MAX_LENGTH = 256
-LEARNING_RATE = 2e-5
+LEARNING_RATE = 1e-5
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
@@ -74,11 +74,19 @@ def make_folded_df(csv_file, num_splits=5):
     df["kfold"] = np.nan
     df = df.rename(columns={'jobflag': 'labels'})
     label = df["labels"].tolist()
+    indices = np.array(range(len(label)))
 
-    skfold = StratifiedKFold(num_splits, shuffle=True, random_state=SEED)
-    for fold, (_, valid_indexes) in enumerate(skfold.split(range(len(label)), label)):
-        for i in valid_indexes:
-            df.iat[i, 3] = fold
+    if num_splits == 1: # No fold. train valid split 
+        indices_train, indices_val = train_test_split(indices,test_size=0.2, random_state=SEED, shuffle=True)
+        for i in indices_val:
+            df.iat[i, 3] = 0 # valid data
+        for i in indices_train:
+            df.iat[i, 3] = 1 # train data
+    else:
+        skfold = StratifiedKFold(num_splits, shuffle=True, random_state=SEED)
+        for fold, (_, valid_indexes) in enumerate(skfold.split(range(len(label)), label)):
+            for i in valid_indexes:
+                df.iat[i, 3] = fold
     return df
 
 def make_dataset(df, tokenizer, device):
@@ -101,7 +109,7 @@ class Classifier(nn.Module):
         hidden_dim = 160
         n_layers = 2
         output_dim = 128
-        drop_prob = 0.2
+        drop_prob = 0.1
         self.bert = AutoModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
