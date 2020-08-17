@@ -1,40 +1,49 @@
+from preprocessing import normalize_comment
+import os
+import lightgbm as lgb
+import warnings
+from keras.backend import argmax
+from keras.utils import to_categorical
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from keras.callbacks import Callback
+from keras.preprocessing import text, sequence
+from keras.layers import CuDNNLSTM, Bidirectional, GlobalMaxPooling1D, GlobalAveragePooling1D, CuDNNGRU, Conv1D
+from keras.layers import Input, Dense, Embedding, SpatialDropout1D, add, concatenate
+from keras.layers.recurrent import LSTM
+from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, GlobalMaxPooling1D
+from keras.layers import Input, Dense, Embedding, SpatialDropout1D, concatenate
+from keras.models import Model
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_auc_score, f1_score, make_scorer
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
+import pandas as pd
+import keras
 import numpy as np
 from keras.wrappers.scikit_learn import KerasClassifier
 
 np.random.seed(42)
-import pandas as pd
 
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.metrics import roc_auc_score, f1_score, make_scorer
-from sklearn.preprocessing import StandardScaler
-from keras.models import Model
-from keras.layers import Input, Dense, Embedding, SpatialDropout1D, concatenate
-from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, GlobalMaxPooling1D
-from keras.layers.recurrent import LSTM
-from keras.layers import Input, Dense, Embedding, SpatialDropout1D, add, concatenate
-from keras.layers import CuDNNLSTM, Bidirectional, GlobalMaxPooling1D, GlobalAveragePooling1D, CuDNNGRU, Conv1D
-from keras.preprocessing import text, sequence
-from keras.callbacks import Callback
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from keras.utils import to_categorical
-from keras.backend import argmax
-import warnings
-import lightgbm as lgb
-import os
 
-warnings.filterwarnings(action='ignore', category=DeprecationWarning, module='sklearn')
+warnings.filterwarnings(
+    action='ignore', category=DeprecationWarning, module='sklearn')
 
-from preprocessing import normalize_comment
 
 os.environ['OMP_NUM_THREADS'] = '4'
 
 EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
+BATCH_SIZE = 512
+LSTM_UNITS = 128
+DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
+EPOCHS = 30
+DROP_PROB = 0.5
+MAX_LEN = 192
 # EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
 
 
 def preprocessing_text(df, is_train=True):
-    remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
+    remove_list = [';', '-', '+',  '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                   '0', '&', '%', ':', '!', '/', '#', '/', '#', ')', '(', '.', '"',  "'"]
 
     for i, line in enumerate(df['description']):
         for r in remove_list:
@@ -44,6 +53,7 @@ def preprocessing_text(df, is_train=True):
         df = df.drop_duplicates(subset=['description'])
 
     return df
+
 
 train = pd.read_csv('data/train.csv')
 train = preprocessing_text(train)
@@ -112,7 +122,7 @@ print(y_tra.shape)
 print(y_val.shape)
 # SETTINGS
 max_features = 30000
-maxlen = 1700
+maxlen = 192
 embed_size = 300
 
 # Define per-fold score containers <-- these are new
@@ -153,7 +163,8 @@ def get_coefs(word, *arr):
     return word, np.asarray(arr, dtype='float32')
 
 
-embeddings_index = dict(get_coefs(*o.rstrip().rsplit(' ')) for o in open(EMBEDDING_FILE, encoding="utf-8"))
+embeddings_index = dict(get_coefs(*o.rstrip().rsplit(' '))
+                        for o in open(EMBEDDING_FILE, encoding="utf-8"))
 
 word_index = tokenizer.word_index
 nb_words = max(max_features, len(word_index) + 1)
@@ -167,8 +178,7 @@ for word, i in word_index.items():
     if embedding_vector is not None:
         embedding_matrix[i] = embedding_vector
 
-print(embedding_matrix.size) # (30000, 300)
-
+print(embedding_matrix.size)  # (30000, 300)
 
 
 class Evaluation(Callback):
@@ -184,18 +194,23 @@ class Evaluation(Callback):
             label = np.argmax(self.y_val, 1)
             predict = np.argmax(y_pred, 1)
             score = f1_score(label, predict, average='macro')
-            print("\n f1 score - epoch: %d - score: %.6f \n" % (epoch + 1, score))
+            print("\n f1 score - epoch: %d - score: %.6f \n" %
+                  (epoch + 1, score))
 
 
 def get_gru_model():
     inp = Input(shape=(maxlen,))
     x = Embedding(nb_words, embed_size, weights=[embedding_matrix])(inp)
-    x = SpatialDropout1D(0.2)(x)
-    x = Bidirectional(GRU(80, return_sequences=True))(x)
+    x = SpatialDropout1D(DROP_PROB)(x)
+    x = Bidirectional(GRU(LSTM_UNITS, return_sequences=True))(x)
     avg_pool = GlobalAveragePooling1D()(x)
     max_pool = GlobalMaxPooling1D()(x)
     conc = concatenate([avg_pool, max_pool])
-    preout = Dense(320, activation='relu')(conc)
+    preout = Dense(DENSE_HIDDEN_UNITS, activation='relu',
+                   kernel_regularizer=keras.regularizers.l2(0.001))(conc)
+    # add dropout before last dense
+    # preout= keras.layers.Dropout(0.5)(preout)
+
     outp = Dense(4, activation="softmax")(preout)
     model = Model(inputs=inp, outputs=outp)
     model.compile(loss='categorical_crossentropy',
@@ -204,17 +219,11 @@ def get_gru_model():
     return model
 
 
-BATCH_SIZE = 512
-LSTM_UNITS = 128
-DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
-EPOCHS = 4
-MAX_LEN = 220
-
-
 def get_gru_lstm_model(embedding_matrix):
     words = Input(shape=(None,))
-    x = Embedding(*embedding_matrix.shape, weights=[embedding_matrix], trainable=False)(words)
-    x = SpatialDropout1D(0.2)(x)
+    x = Embedding(*embedding_matrix.shape,
+                  weights=[embedding_matrix], trainable=False)(words)
+    x = SpatialDropout1D(DROP_PROB)(x)
     x = Bidirectional(GRU(LSTM_UNITS, return_sequences=True))(x)
     x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
 
@@ -222,8 +231,10 @@ def get_gru_lstm_model(embedding_matrix):
         GlobalMaxPooling1D()(x),
         GlobalAveragePooling1D()(x),
     ])
-    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu')(hidden)])
-    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu')(hidden)])
+    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu',
+                                kernel_regularizer=keras.regularizers.l2(0.001))(hidden)])
+    hidden = add([hidden, Dense(DENSE_HIDDEN_UNITS, activation='relu',
+                                kernel_regularizer=keras.regularizers.l2(0.001),)(hidden)])
     result = Dense(4, activation='softmax')(hidden)
 
     model = Model(inputs=words, outputs=result)
@@ -279,7 +290,8 @@ def train_with_cv(batch_size=32, epochs=5, num_folds=10):
         print('------------------------------------------------------------------------')
         print(f'Training for fold {fold_no}/{num_folds} ...')
         # X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
-        eval_score = Evaluation(validation_data=(x_train[val], y_train_onehot[val]), interval=1)
+        eval_score = Evaluation(validation_data=(
+            x_train[val], y_train_onehot[val]), interval=1)
 
         hist = model.fit(x_train[train], y_train_onehot[train], batch_size=batch_size, epochs=epochs,
                          validation_data=(x_train[val], y_train_onehot[val]),
@@ -292,7 +304,8 @@ def train_with_cv(batch_size=32, epochs=5, num_folds=10):
     y_pred = model.predict(x_test, batch_size=1024)
     pred = np.argmax(y_pred, 1)
     submission.iloc[:, 1] = pred + 1
-    submission.to_csv('./output/grulstm_{}ep_{}cv.csv'.format(epochs, num_folds), index=False, header=None)
+    submission.to_csv('./output/grulstm_{}ep_{}cv.csv'.format(epochs,
+                                                              num_folds), index=False, header=None)
 
 
 def train(batch_size=32, epochs=10):
@@ -301,7 +314,8 @@ def train(batch_size=32, epochs=10):
     Returns:
 
     """
-    X_tra, X_val, y_tra, y_val = train_test_split(x_train, y_train_onehot, train_size=0.95, random_state=233)
+    X_tra, X_val, y_tra, y_val = train_test_split(
+        x_train, y_train_onehot, train_size=0.80, random_state=233)
     print(y_tra.shape)
     print(y_val.shape)
     print(X_tra)
@@ -312,11 +326,10 @@ def train(batch_size=32, epochs=10):
     y_pred = model.predict(x_test, batch_size=1024)
     pred = np.argmax(y_pred, 1)
     submission.iloc[:, 1] = pred + 1
-    submission.to_csv('submission.csv', index=False, header=None)
+    submission.to_csv('submission_{}_{}ep.csv'.format(
+        model_type, EPOCHS), index=False, header=None)
     return hist
 
 
-batch_size = 128
-epochs = 5
-train_with_cv(batch_size=batch_size, epochs=epochs)
+train(batch_size=BATCH_SIZE, epochs=EPOCHS)
 # train_with_LGBM()
