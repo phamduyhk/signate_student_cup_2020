@@ -42,12 +42,12 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'roberta-large'
+MODEL_NAME = 'roberta-base'
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
-NUM_SPLITS = 10
+NUM_SPLITS = 5
 MAX_LENGTH = 256
 LEARNING_RATE = 1e-5
 
@@ -100,7 +100,7 @@ class Classifier(nn.Module):
         hidden_dim = 160
         n_layers = 2
         output_dim = 128
-        drop_prob = 0.2
+        drop_prob = 0.1
         self.bert = AutoModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
