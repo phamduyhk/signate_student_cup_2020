@@ -49,7 +49,7 @@ NUM_CLASSES = 4
 EPOCHS = 10
 NUM_SPLITS = 5
 MIN_LENTH = 0
-MAX_LENGTH = 128
+MAX_LENGTH = 256
 MAX_TEST_LENGTH = 128
 LEARNING_RATE = 1e-5
 
@@ -72,7 +72,7 @@ def preprocessing_text(df, is_train=True):
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
     df = preprocessing_text(df)
-    df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
+    # df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
     df["jobflag"] = df["jobflag"] - 1
     df["kfold"] = np.nan
     df = df.rename(columns={'jobflag': 'labels'})
@@ -378,7 +378,7 @@ for fold in range(NUM_SPLITS):
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
 test_df = preprocessing_text(test_df, is_train=False)
-test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
+# test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(
@@ -409,7 +409,7 @@ with torch.no_grad():
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
-submit["len_mask"] = test_df["len_mask"]
+# submit["len_mask"] = test_df["len_mask"]
 submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
