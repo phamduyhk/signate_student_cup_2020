@@ -70,8 +70,8 @@ def preprocessing_text(df, is_train=True):
 
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
-    df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
     df = preprocessing_text(df)
+    df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
     df["jobflag"] = df["jobflag"] - 1
     df["kfold"] = np.nan
     df = df.rename(columns={'jobflag': 'labels'})
