@@ -402,7 +402,7 @@ def semisup_trainer(fold, df, test_loader):
 
     for epoch in range(EPOCHS):
 
-        progress = tqdm(dataloader, total=len(test_dataloader))
+        progress = tqdm(test_dataloader, total=len(test_dataloader))
 
         for i, batch in enumerate(progress):
             progress.set_description(f"<Train with test data> Epoch{epoch + 1}")
@@ -457,7 +457,7 @@ def semisup_trainer(fold, df, test_loader):
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
 test_df = preprocessing_text(test_df, is_train=False)
-test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
+# test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(
