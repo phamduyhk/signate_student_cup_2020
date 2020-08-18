@@ -425,6 +425,8 @@ def semisup_trainer(fold, df, test_loader):
             optimizer.zero_grad()
             unlabeled_loss.backward()
             optimizer.step()
+            del attention_mask, input_ids, labels, token_type_ids
+            del output_unlabeled, output, unlabeled_loss
             #end test
 
             # For every 50 batches train one epoch on labeled data 
