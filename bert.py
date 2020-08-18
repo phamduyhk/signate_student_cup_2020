@@ -39,7 +39,7 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/train.csv"
+TRAIN_FILE = "./data/pseudo_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-large-cased'
@@ -414,7 +414,7 @@ submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/prob_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
+    submit.to_csv("./output/pseudo_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
