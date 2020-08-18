@@ -67,6 +67,16 @@ def preprocessing_text(df, is_train=True):
 
     return df
 
+def split_data_by_length(df, min_len, max_len):
+    drop_index = []
+    df['drop'] = False
+    for index, line in enumerate(df['description']):
+        if not(min_len<len(line)<=max_len):
+            df.iat[index,3] = True
+    df = df[df['drop']==False]
+    del df['drop']
+    return df
+
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
     df = preprocessing_text(df)
