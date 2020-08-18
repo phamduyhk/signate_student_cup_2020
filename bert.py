@@ -50,6 +50,7 @@ EPOCHS = 10
 NUM_SPLITS = 5
 MIN_LENTH = 0
 MAX_LENGTH = 128
+MAX_TEST_LENGTH = 128
 LEARNING_RATE = 1e-5
 
 if not os.path.exists(MODELS_DIR):
@@ -99,6 +100,13 @@ def split_data_by_length(df, min_len, max_len):
             df.iat[index,3] = True
     df = df[df['drop']==False]
     del df['drop']
+    return df
+
+def add_length_mask_for_test(df, min_len, max_len):
+    df['len_mask'] = 0
+    for index, line in enumerate(df['description']):
+        if min_len<len(line)<=max_len:
+            df.iat[index,2] = 1
     return df
 
 def make_dataset(df, tokenizer, device):
@@ -369,8 +377,8 @@ for fold in range(NUM_SPLITS):
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
-test_df = split_data_by_length(test_df, MIN_LENTH, MAX_LENGTH)
 test_df = preprocessing_text(test_df, is_train=False)
+test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(
@@ -401,6 +409,7 @@ with torch.no_grad():
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
+submit["len_mask"] = test_df["len_mask"]
 submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
