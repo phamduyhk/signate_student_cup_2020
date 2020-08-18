@@ -47,8 +47,9 @@ TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 10
-NUM_SPLITS = 1
-MAX_LENGTH = 256
+NUM_SPLITS = 5
+MIN_LENTH = 0
+MAX_LENGTH = 128
 LEARNING_RATE = 1e-5
 
 if not os.path.exists(MODELS_DIR):
@@ -69,6 +70,7 @@ def preprocessing_text(df, is_train=True):
 
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
+    df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
     df = preprocessing_text(df)
     df["jobflag"] = df["jobflag"] - 1
     df["kfold"] = np.nan
@@ -87,6 +89,16 @@ def make_folded_df(csv_file, num_splits=5):
         for fold, (_, valid_indexes) in enumerate(skfold.split(range(len(label)), label)):
             for i in valid_indexes:
                 df.iat[i, 3] = fold
+    return df
+
+def split_data_by_length(df, min_len, max_len):
+    drop_index = []
+    df['drop'] = False
+    for index, line in enumerate(df['description']):
+        if not(min_len<len(line)<=max_len):
+            df.iat[index,3] = True
+    df = df[df['drop']==False]
+    del df['drop']
     return df
 
 def make_dataset(df, tokenizer, device):
@@ -357,6 +369,7 @@ for fold in range(NUM_SPLITS):
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
+test_df = split_data_by_length(test_df, MIN_LENTH, MAX_LENGTH)
 test_df = preprocessing_text(test_df, is_train=False)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
@@ -392,7 +405,7 @@ submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/prob_{}_{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
+    submit.to_csv("./output/prob_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
