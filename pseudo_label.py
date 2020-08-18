@@ -413,7 +413,6 @@ def semisup_trainer(fold, df, test_loader):
             optimizer.zero_grad()
             model.eval()
             output_unlabeled  = model(input_ids, attention_mask, token_type_ids)
-            del input_ids, attention_mask, token_type_ids
 
             _, pseudo_labeled = torch.max(output_unlabeled, 1)
 
