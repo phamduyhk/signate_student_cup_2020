@@ -33,10 +33,10 @@ os.environ['OMP_NUM_THREADS'] = '4'
 
 EMBEDDING_FILE = 'data/crawl-300d-2M.vec'
 BATCH_SIZE = 512
-LSTM_UNITS = 128
+LSTM_UNITS = 40
 DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
-EPOCHS = 30
-DROP_PROB = 0.5
+EPOCHS = 15
+DROP_PROB = 0.2
 MAX_LEN = 192
 # EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
 
@@ -55,7 +55,7 @@ def preprocessing_text(df, is_train=True):
     return df
 
 
-train = pd.read_csv('data/train.csv')
+train = pd.read_csv('data/pseudo_train.csv')
 train = preprocessing_text(train)
 test = pd.read_csv('data/test.csv')
 test = preprocessing_text(test, is_train=False)
@@ -243,9 +243,9 @@ def get_gru_lstm_model(embedding_matrix):
     return model
 
 
-model_type = "gru"
+model_type = "gru_lstm"
 load_model = False
-if model_type is "gru_stlm":
+if model_type is "gru_lstm":
     model = get_gru_lstm_model(embedding_matrix)
     if load_model is True and os.path.exists("grulstm_param.hdf5"):
         model.load_weights("grulstm_param.hdf5")

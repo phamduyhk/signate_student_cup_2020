@@ -7,7 +7,7 @@ import re
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
-
+import random
 import gc
 from keras import backend as K
 
@@ -36,6 +36,8 @@ def tokenizer(description):
     description = re.sub(r"\!+", "!", description)
     description = re.sub(r"\,+", ",", description)
     description = re.sub(r"\?+", "?", description)
+    description = re.sub(r"\"", "", description) # remove ""
+    description = re.sub(r"\'", "", description) # remove '
     if (len(description) > MAX_CHARS):
         description = description[:MAX_CHARS]
     return [x.text for x in NLP.tokenizer(description) if x.text != " "]
@@ -73,6 +75,10 @@ def read_files(fix_length=100, lower=False, vectors=None):
             ('jobflag', data.Field(
                 use_vocab=False, sequential=False))
         ])
+
+    train, valid = train.split(
+    split_ratio=0.8, random_state=random.seed(2395))
+
     LOGGER.debug("Reading test csv file...")
     test = data.TabularDataset(
         path='cache/dataset_test.csv', format='csv', skip_header=True,
@@ -88,7 +94,7 @@ def read_files(fix_length=100, lower=False, vectors=None):
         vectors=vectors
     )
     LOGGER.debug("Done preparing the datasets")
-    return train.examples, test.examples, description
+    return train, valid, test, description
 
 
 """

@@ -521,7 +521,7 @@ with torch.no_grad():
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
-submit["len_mask"] = test_df["len_mask"]
+# submit["len_mask"] = test_df["len_mask"]
 submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")

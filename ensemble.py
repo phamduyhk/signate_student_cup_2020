@@ -2,7 +2,11 @@ import pandas as pd
 import numpy as np
 import os
 
-ensemble_files = ["./output/prob_albert-xxlarge-v2_128_10ep.csv", "output/prob_bert-large-cased_256_10ep.csv"]
+# ensemble_files = ["./output/prob_albert-xxlarge-v2_512_10ep.csv","./output/prob_albert-xxlarge-v2_128_10ep.csv", "output/prob_bert-large-cased_256_10ep.csv",
+# "output/prob_bert-base-cased_512_10ep.csv", "output/prob_bert-base-cased_128_10ep.csv"]
+
+
+ensemble_files = ["./output/prob_albert-xxlarge-v2_512_10ep.csv","./output/prob_albert-xxlarge-v2_128_10ep.csv"]
 
 submit = pd.read_csv("./data/submit_sample.csv", header=None)
 all_prob = None
@@ -28,5 +32,5 @@ submit.iloc[:,1] = predict_label
 if not os.path.exists("./output"):
     os.mkdir("./output")
     
-submit.to_csv("./output/submit_ensemble_{}_{}.csv".format("bert-large-cased_256", "prob_albert-xxlarge-v2_128"), index=False, header=False)
+submit.to_csv("./output/submit_ensemble_{}_{}.csv".format("roberta", "albert"), index=False, header=False)
 submit.head()
