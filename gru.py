@@ -15,6 +15,8 @@ from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, GlobalMaxPo
 from keras.layers import Input, Dense, Embedding, SpatialDropout1D, concatenate
 from keras.models import Model
 from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, f1_score, make_scorer
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 import pandas as pd
@@ -158,6 +160,10 @@ y_train_onehot = onehot_encoder.fit_transform(reshaped)
 # x_train = z_normalize(x_train)
 # x_test = z_normalize(x_test)
 
+# for light gbm
+train_features = x_train
+train_target = y_train
+
 
 def get_coefs(word, *arr):
     return word, np.asarray(arr, dtype='float32')
@@ -243,39 +249,67 @@ def get_gru_lstm_model(embedding_matrix):
     return model
 
 
-model_type = "gru_lstm"
-load_model = False
-if model_type is "gru_lstm":
-    model = get_gru_lstm_model(embedding_matrix)
-    if load_model is True and os.path.exists("grulstm_param.hdf5"):
-        model.load_weights("grulstm_param.hdf5")
-        print("loaded weight")
-elif model_type is "gru":
-    model = get_gru_model()
-    if load_model is True and os.path.exists("gru_param.hdf5"):
-        model.load_weights("gru_param.hdf5")
-        print("loaded weight")
+# model_type = "gru_lstm"
+# load_model = False
+# if model_type is "gru_lstm":
+#     model = get_gru_lstm_model(embedding_matrix)
+#     if load_model is True and os.path.exists("grulstm_param.hdf5"):
+#         model.load_weights("grulstm_param.hdf5")
+#         print("loaded weight")
+# elif model_type is "gru":
+#     model = get_gru_model()
+#     if load_model is True and os.path.exists("gru_param.hdf5"):
+#         model.load_weights("gru_param.hdf5")
+#         print("loaded weight")
 
-print(model.summary())
+# print(model.summary())
 
 
 def train_with_LGBM():
     scores = []
-    param = {
-        'metric': 'multi_logloss',
-        'num_class': 4,
-    }
-    stacker = lgb.LGBMClassifier(max_depth=3, n_estimators=125, num_leaves=10, boosting_type="gbdt",
-                                 learning_rate=0.1, feature_fraction=0.45, colsample_bytree=0.45, bagging_fraction=0.8,
-                                 bagging_freq=5, reg_lambda=0.2)
-    score = cross_val_score(stacker, x_train, y_train, cv=5,
-                            scoring=make_scorer(f1_score, average='weighted', labels=[4]))
-    print("Score:", score)
-    scores.append(np.mean(score))
-    stacker.fit(x_train, y_train)
-    pred = stacker.predict_proba(X_test)[:, 1]
+    # param = {
+    #     'metric': 'multi_logloss',
+    #     'num_class': 4,
+    # }
+    model = LogisticRegression(solver='lbfgs')
+    sfm = SelectFromModel(model, threshold=0.2)
+    print(train_features.shape)
+    train_sparse_matrix = sfm.fit_transform(train_features, train_target)
+    print(train_sparse_matrix.shape)
+    train_sparse_matrix, valid_sparse_matrix, y_train, y_valid = train_test_split(train_sparse_matrix, train_target, test_size=0.05, random_state=144)
+    test_sparse_matrix = sfm.transform(test_features)
+    d_train = lgb.Dataset(train_sparse_matrix, label=y_train)
+    d_valid = lgb.Dataset(valid_sparse_matrix, label=y_valid)
+    watchlist = [d_train, d_valid]       
+    params = {'learning_rate': 0.2,
+              'application': 'multiclass',
+              'num_leaves': 31,
+              'verbosity': -1,
+              'metric': 'multi_logloss',
+              'data_random_seed': 2,
+              'bagging_fraction': 0.8,
+              'feature_fraction': 0.6,
+              'nthread': 4,
+              'lambda_l1': 1,
+              'lambda_l2': 1}             
+    model = lgb.train(params,
+                      train_set=d_train,
+                      num_boost_round= 80,
+                      valid_sets=watchlist,
+                      verbose_eval=10)
+    # stacker = lgb.LGBMClassifier(max_depth=3, n_estimators=125, num_leaves=10, boosting_type="gbdt",
+    #                              learning_rate=0.1, feature_fraction=0.45, colsample_bytree=0.45, bagging_fraction=0.8,
+    #                              bagging_freq=5, reg_lambda=0.2)
+    # score = cross_val_score(stacker, x_train, y_train, cv=5,
+    #                         scoring=make_scorer(f1_score, average='weighted', labels=[4]))
+    # print("Score:", score)
+    # scores.append(np.mean(score))
+    # stacker.fit(x_train, y_train)
+    # pred = stacker.predict_proba(X_test)[:, 1]
+    # print(pred)
+    # print("CV score:", np.mean(scores))
+    pred = model.predict(X_test)
     print(pred)
-    print("CV score:", np.mean(scores))
 
 
 def train_with_cv(batch_size=32, epochs=5, num_folds=10):
@@ -331,5 +365,5 @@ def train(batch_size=32, epochs=10):
     return hist
 
 
-train(batch_size=BATCH_SIZE, epochs=EPOCHS)
-# train_with_LGBM()
+# train(batch_size=BATCH_SIZE, epochs=EPOCHS)
+train_with_LGBM()
