@@ -21,6 +21,7 @@ from sklearn.metrics import roc_auc_score, f1_score, make_scorer
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 import pandas as pd
 import keras
+from keras import backend as K
 import numpy as np
 from keras.wrappers.scikit_learn import KerasClassifier
 
@@ -203,6 +204,35 @@ class Evaluation(Callback):
             print("\n f1 score - epoch: %d - score: %.6f \n" %
                   (epoch + 1, score))
 
+def f1(y_true, y_pred):
+    def recall(y_true, y_pred):
+        """Recall metric.
+
+        Only computes a batch-wise average of recall.
+
+        Computes the recall, a metric for multi-label classification of
+        how many relevant items are selected.
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
+
+    def precision(y_true, y_pred):
+        """Precision metric.
+
+        Only computes a batch-wise average of precision.
+
+        Computes the precision, a metric for multi-label classification of
+        how many selected items are relevant.
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+    precision = precision(y_true, y_pred)
+    recall = recall(y_true, y_pred)
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 def get_gru_model():
     inp = Input(shape=(maxlen,))
@@ -221,7 +251,7 @@ def get_gru_model():
     model = Model(inputs=inp, outputs=outp)
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
-                  metrics=['accuracy'])
+                  metrics=['accuracy', f1])
     return model
 
 
@@ -244,25 +274,25 @@ def get_gru_lstm_model(embedding_matrix):
     result = Dense(4, activation='softmax')(hidden)
 
     model = Model(inputs=words, outputs=result)
-    model.compile(loss='categorical_crossentropy', optimizer='adam')
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', f1])
 
     return model
 
 
-# model_type = "gru_lstm"
-# load_model = False
-# if model_type is "gru_lstm":
-#     model = get_gru_lstm_model(embedding_matrix)
-#     if load_model is True and os.path.exists("grulstm_param.hdf5"):
-#         model.load_weights("grulstm_param.hdf5")
-#         print("loaded weight")
-# elif model_type is "gru":
-#     model = get_gru_model()
-#     if load_model is True and os.path.exists("gru_param.hdf5"):
-#         model.load_weights("gru_param.hdf5")
-#         print("loaded weight")
+model_type = "gru"
+load_model = False
+if model_type is "gru_lstm":
+    model = get_gru_lstm_model(embedding_matrix)
+    if load_model is True and os.path.exists("grulstm_param.hdf5"):
+        model.load_weights("grulstm_param.hdf5")
+        print("loaded weight")
+elif model_type is "gru":
+    model = get_gru_model()
+    if load_model is True and os.path.exists("gru_param.hdf5"):
+        model.load_weights("gru_param.hdf5")
+        print("loaded weight")
 
-# print(model.summary())
+print(model.summary())
 
 
 def train_with_LGBM():
@@ -348,8 +378,8 @@ def train(batch_size=32, epochs=10):
     Returns:
 
     """
-    X_tra, X_val, y_tra, y_val = train_test_split(
-        x_train, y_train_onehot, train_size=0.80, random_state=233)
+    # X_tra, X_val, y_tra, y_val = train_test_split(
+    #     x_train, y_train_onehot, train_size=0.80, random_state=233)
     print(y_tra.shape)
     print(y_val.shape)
     print(X_tra)
@@ -365,5 +395,5 @@ def train(batch_size=32, epochs=10):
     return hist
 
 
-# train(batch_size=BATCH_SIZE, epochs=EPOCHS)
-train_with_LGBM()
+train(batch_size=BATCH_SIZE, epochs=EPOCHS)
+# train_with_LGBM()
