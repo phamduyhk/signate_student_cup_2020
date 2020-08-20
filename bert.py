@@ -39,15 +39,15 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/pseudo_train.csv"
+TRAIN_FILE = "./data/augumented_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-large-cased'
 TRAIN_BATCH_SIZE = 16
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 10
-NUM_SPLITS = 1
+EPOCHS = 5
+NUM_SPLITS = 5
 MIN_LENTH = 0
 MAX_LENGTH = 256
 MAX_TEST_LENGTH = 128
@@ -100,7 +100,7 @@ def split_data_by_length(df, min_len, max_len):
             df.iat[index,3] = True
     df = df[df['drop']==False]
     del df['drop']
-    return df
+    return df0
 
 def add_length_mask_for_test(df, min_len, max_len):
     df['len_mask'] = 0
