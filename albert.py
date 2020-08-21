@@ -39,15 +39,15 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/train.csv"
+TRAIN_FILE = "./data/augumented_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'albert-xxlarge-v2'
-TRAIN_BATCH_SIZE = 32
+TRAIN_BATCH_SIZE = 16
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
-NUM_SPLITS = 1
+NUM_SPLITS = 5
 MAX_LENGTH = 256
 LEARNING_RATE = 1e-5
 
