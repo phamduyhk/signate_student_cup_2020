@@ -39,7 +39,7 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/augumented_train.csv"
+TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'albert-xxlarge-v2'
@@ -60,7 +60,7 @@ def preprocessing_text(df, is_train=True):
 
     for i, line in enumerate(df['description']):
         for r in remove_list:
-            df['description'][i] = df['description'][i].replace(r, "")
+            df['description'][i] = df['description'][i].replace(r, " ")
     # remove duplicated rows
     if is_train:
         df = df.drop_duplicates(subset=['description'])
