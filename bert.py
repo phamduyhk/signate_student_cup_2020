@@ -39,19 +39,19 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
+TRAIN_FILE = "./data/pseudo_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-large-cased'
 TRAIN_BATCH_SIZE = 16
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 5
+EPOCHS = 4
 NUM_SPLITS = 5
 MIN_LENTH = 0
 MAX_LENGTH = 256
 MAX_TEST_LENGTH = 128
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 2e-5
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
