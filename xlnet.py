@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, XLNetForSequenceClassification
+from transformers import AutoTokenizer, AutoModel, AdamW
 import nlp
 
 SEED = 42
@@ -38,12 +38,12 @@ if torch.cuda.is_available():
     current_device = torch.cuda.current_device()
     print("Device:", torch.cuda.get_device_name(current_device))
 
-DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/pseudo_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'xlnet-large-cased'
-TRAIN_BATCH_SIZE = 32
+TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
@@ -130,6 +130,8 @@ class Classifier(nn.Module):
         n_layers = 2
         output_dim = 128
         drop_prob = 0.1
+        self.hidden_layers = [-1, -2, -3, -4]
+        self.hidden_size = embedding_dim
         self.bert = AutoModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
@@ -147,6 +149,25 @@ class Classifier(nn.Module):
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
+
+           # hidden states fusion
+        weights_init = torch.zeros(len(self.hidden_layers)).float()
+        weights_init.data[:-1] = -3
+        self.layer_weights = torch.nn.Parameter(weights_init)
+
+        self.qa_start_end = nn.Linear(self.hidden_size, 2)
+
+        def init_weights_linear(m):
+            if type(m) == torch.nn.Linear:
+                torch.nn.init.normal_(m.weight, std=0.02)
+                torch.nn.init.normal_(m.bias, 0)
+
+        self.qa_start_end.apply(init_weights_linear)
+
+        self.dropouts = nn.ModuleList([
+            nn.Dropout(0.5) for _ in range(5)
+        ])
+
     def get_hidden_states(self, hidden_states):
 
         fuse_hidden = None
@@ -163,29 +184,38 @@ class Classifier(nn.Module):
         fuse_hidden = (torch.softmax(self.layer_weights, dim=0) * fuse_hidden).sum(-1)
 
         return fuse_hidden
+
+    def get_logits_by_random_dropout(self, fuse_hidden, fc):
+
+        logit = None
+        h = fuse_hidden
+
+        for j, dropout in enumerate(self.dropouts):
+
+            if j == 0:
+                logit = fc(dropout(h))
+            else:
+                logit += fc(dropout(h))
+
+        return logit / len(self.dropouts)
+
+
     def forward(self, input_ids, attention_mask, token_type_ids):
         output = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
-        hidden = output[1]
+        hidden_states = output[1]
         fuse_hidden = self.get_hidden_states(hidden_states)
+        fuse_hidden_context = fuse_hidden
+        hidden_classification = fuse_hidden[:, -1, :]
+        # #################################################################### direct approach
+        logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end)
+        start_logits, end_logits = logits.split(1, dim=-1)
+        start_logits, end_logits = start_logits.squeeze(-1), end_logits.squeeze(-1)
 
-        output = output[:, 0, :]
-
-        # x = self.dropout(output)
-        # gru, h_gru = self.gru(x)
-        # gru = self.fc(self.relu(gru[:, -1]))
-        # lstm, h_lstm = self.lstm(x)
-        # lstm = self.fc(self.relu(lstm[:, -1]))
-        # concatenate = torch.cat(
-        #     (gru, lstm), 1)
-        # output = self.linear(self.relu(concatenate))
-
-        #   # for bert only
-        output = self.dropout(output)
-        output = self.linear(output)
+        outputs = (start_logits, end_logits,) + outputs[2:]
         return output
 
 
@@ -206,14 +236,13 @@ def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
 
         optimizer.zero_grad()
 
-        loss, outputs = model(input_ids, attention_mask, token_type_ids)
+        outputs = model(input_ids, attention_mask, token_type_ids)
         del input_ids, attention_mask, token_type_ids
-        # loss = criterion(outputs, labels)  # 損失を計算
+        loss = criterion(outputs, labels)  # 損失を計算
         _, preds = torch.max(outputs, 1)  # ラベルを予測
         del outputs
 
         loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
         scheduler.step()
 
@@ -317,8 +346,7 @@ def trainer(fold, df):
         valid_dataset, batch_size=VALID_BATCH_SIZE, shuffle=False
     )
 
-    # model = Classifier(MODEL_NAME, num_classes=NUM_CLASSES)
-    model = XLNetForSequenceClassification.from_pretrained("xlnet-large-cased", num_labels=4)
+    model = Classifier(MODEL_NAME, num_classes=NUM_CLASSES)
     model = model.to(DEVICE)
 
     criterion = nn.CrossEntropyLoss()
