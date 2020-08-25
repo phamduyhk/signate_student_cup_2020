@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, RobertaConfig, RobertaModel
+from transformers import AutoTokenizer, AutoModel, AdamW, RobertaConfig, RobertaModel, RobertaForSequenceClassification
 import nlp
 
 SEED = 42
@@ -115,7 +115,7 @@ class Classifier(nn.Module):
         self.config = RobertaConfig.from_json_file(model_config)
         self.config.output_hidden_states = True
         self.config.hidden_dropout_prob = 0.1
-        self.bert = RobertaModel.from_pretrained(model_name, config=self.config)
+        self.bert = RobertaForSequenceClassification.from_pretrained(model_name, num_labels=4)
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
         self.linear = nn.Linear(MAX_LENGTH, num_classes)
@@ -187,17 +187,18 @@ class Classifier(nn.Module):
         outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask)
-        hidden_states = outputs[2]
-        # bs, seq len, hidden size
-        fuse_hidden = self.get_hidden_states(hidden_states)
+        logits = outputs[0]
+        # hidden_states = outputs[2]
+        # # bs, seq len, hidden size
+        # fuse_hidden = self.get_hidden_states(hidden_states)
 
-        fuse_hidden_context = fuse_hidden
+        # fuse_hidden_context = fuse_hidden
 
-        hidden_classification = fuse_hidden[:, 0, :]
+        # hidden_classification = fuse_hidden[:, 0, :]
 
-        # #################################################################### direct approach
-        logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end).squeeze(-1)
-        outputs = self.linear(logits)
+        # # #################################################################### direct approach
+        # logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end).squeeze(-1)
+        # outputs = self.linear(logits)
         return logits
 
 
