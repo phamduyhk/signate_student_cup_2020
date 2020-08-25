@@ -4,7 +4,7 @@ import collections
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold,train_test_split
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import classification_report, f1_score, confusion_matrix
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, RobertaConfig, RobertaModel
+from transformers import AutoTokenizer, AutoModel, AdamW, BertConfig, BertModel
 import nlp
 
 SEED = 42
@@ -38,28 +38,31 @@ if torch.cuda.is_available():
     current_device = torch.cuda.current_device()
     print("Device:", torch.cuda.get_device_name(current_device))
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
-MODEL_NAME = 'roberta-large'
+MODEL_NAME = 'bert-large-cased'
 TRAIN_BATCH_SIZE = 16
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 5
+EPOCHS = 4
 NUM_SPLITS = 5
+MIN_LENTH = 0
 MAX_LENGTH = 256
-LEARNING_RATE = 1e-5
+MAX_TEST_LENGTH = 128
+LEARNING_RATE = 2e-5
 
 if not os.path.exists(MODELS_DIR):
     os.mkdir(MODELS_DIR)
+
 
 def preprocessing_text(df, is_train=True):
     remove_list = [';', '-', '+',  '1', '2','3', '4', '5', '6', '7','8', '9', '0', '&', '%', ':', '!', '/', '#','/', '#', ')', '(', '.', '"',  "'"]
 
     for i, line in enumerate(df['description']):
         for r in remove_list:
-            df['description'][i] = df['description'][i].replace(r, "")
+            df['description'][i] = df['description'][i].replace(r, " ")
     # remove duplicated rows
     if is_train:
         df = df.drop_duplicates(subset=['description'])
@@ -69,6 +72,7 @@ def preprocessing_text(df, is_train=True):
 def make_folded_df(csv_file, num_splits=5):
     df = pd.read_csv(csv_file)
     df = preprocessing_text(df)
+    # df = split_data_by_length(df, MIN_LENTH, MAX_LENGTH)
     df["jobflag"] = df["jobflag"] - 1
     df["kfold"] = np.nan
     df = df.rename(columns={'jobflag': 'labels'})
@@ -88,6 +92,23 @@ def make_folded_df(csv_file, num_splits=5):
                 df.iat[i, 3] = fold
     return df
 
+def split_data_by_length(df, min_len, max_len):
+    drop_index = []
+    df['drop'] = False
+    for index, line in enumerate(df['description']):
+        if not(min_len<len(line)<=max_len):
+            df.iat[index,3] = True
+    df = df[df['drop']==False]
+    del df['drop']
+    return df0
+
+def add_length_mask_for_test(df, min_len, max_len):
+    df['len_mask'] = 0
+    for index, line in enumerate(df['description']):
+        if min_len<len(line)<=max_len:
+            df.iat[index,2] = 1
+    return df
+
 def make_dataset(df, tokenizer, device):
     dataset = nlp.Dataset.from_pandas(df)
     dataset = dataset.map(
@@ -96,7 +117,7 @@ def make_dataset(df, tokenizer, device):
                                   truncation=True,
                                   max_length=MAX_LENGTH))
     dataset.set_format(type='torch',
-                       columns=['input_ids', 'attention_mask', 'labels'],
+                       columns=['input_ids', 'token_type_ids', 'attention_mask', 'labels'],
                        device=device)
     return dataset
 
@@ -111,11 +132,11 @@ class Classifier(nn.Module):
         drop_prob = 0.1
         self.hidden_layers = [-1, -2, -3, -4]
         self.hidden_size = embedding_dim
-        model_config = 'roberta_large_config.json'
-        self.config = RobertaConfig.from_json_file(model_config)
+        model_config = 'bert_large_config.json'
+        self.config = BertConfig.from_json_file(model_config)
         self.config.output_hidden_states = True
         self.config.hidden_dropout_prob = 0.1
-        self.bert = RobertaModel.from_pretrained(model_name, config=self.config)
+        self.bert = BertModel.from_pretrained(model_name, config=self.config)
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
         self.linear = nn.Linear(MAX_LENGTH, num_classes)
@@ -132,7 +153,7 @@ class Classifier(nn.Module):
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
-
+        
         # hidden states fusion
         weights_init = torch.zeros(len(self.hidden_layers)).float()
         weights_init.data[:-1] = -3
@@ -183,18 +204,18 @@ class Classifier(nn.Module):
         return logit / len(self.dropouts)
 
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, token_type_ids):
         outputs = self.bert(
             input_ids=input_ids,
-            attention_mask=attention_mask)
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids)
+
         hidden_states = outputs[2]
+
         # bs, seq len, hidden size
         fuse_hidden = self.get_hidden_states(hidden_states)
-
         fuse_hidden_context = fuse_hidden
-
         hidden_classification = fuse_hidden[:, 0, :]
-
         # #################################################################### direct approach
         logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end).squeeze(-1)
         outputs = self.linear(logits)
@@ -213,13 +234,13 @@ def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
     for i, batch in enumerate(progress):
         progress.set_description(f"<Train> Epoch{epoch + 1}")
 
-        attention_mask, input_ids, labels = batch.values()
+        attention_mask, input_ids, labels, token_type_ids = batch.values()
         del batch
 
         optimizer.zero_grad()
 
-        outputs = model(input_ids, attention_mask)
-        del input_ids, attention_mask
+        outputs = model(input_ids, attention_mask, token_type_ids)
+        del input_ids, attention_mask, token_type_ids
         loss = criterion(outputs, labels)  # 損失を計算
         _, preds = torch.max(outputs, 1)  # ラベルを予測
         del outputs
@@ -258,11 +279,11 @@ def eval_fn(dataloader, model, criterion, device, epoch):
         for i, batch in enumerate(progress):
             progress.set_description(f"<Valid> Epoch{epoch + 1}")
 
-            attention_mask, input_ids, labels = batch.values()
+            attention_mask, input_ids, labels, token_type_ids = batch.values()
             del batch
 
-            outputs = model(input_ids, attention_mask)
-            del input_ids, attention_mask
+            outputs = model(input_ids, attention_mask, token_type_ids)
+            del input_ids, attention_mask, token_type_ids
             loss = criterion(outputs, labels)
             _, preds = torch.max(outputs, 1)
             del outputs
@@ -408,6 +429,7 @@ for fold in range(NUM_SPLITS):
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 test_df = pd.read_csv(TEST_FILE)
 test_df = preprocessing_text(test_df, is_train=False)
+# test_df = add_length_mask_for_test(test_df, MIN_LENTH, MAX_TEST_LENGTH)
 test_df["labels"] = -1
 test_dataset = make_dataset(test_df, tokenizer, DEVICE)
 test_dataloader = torch.utils.data.DataLoader(
@@ -421,11 +443,11 @@ with torch.no_grad():
     for batch in progress:
         progress.set_description("<Test>")
 
-        attention_mask, input_ids, labels = batch.values()
+        attention_mask, input_ids, labels, token_type_ids = batch.values()
 
         outputs = []
         for model in models:
-            output = model(input_ids, attention_mask)
+            output = model(input_ids, attention_mask, token_type_ids)
             outputs.append(output)
 
         outputs = sum(outputs) / len(outputs)
@@ -438,11 +460,12 @@ with torch.no_grad():
 submit = pd.read_csv("./data/submit_sample.csv", names=["id", "labels"])
 submit["labels"] = final_output
 submit["labels"] = submit["labels"] + 1
+# submit["len_mask"] = test_df["len_mask"]
 submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/prob_{}_{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
+    submit.to_csv("./output/pseudo_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
