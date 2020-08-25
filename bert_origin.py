@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, AutoConfig, BertConfig
+from transformers import AutoTokenizer, AutoModel, AdamW
 import nlp
 
 SEED = 42
@@ -43,10 +43,10 @@ TRAIN_FILE = "./data/pseudo_train.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-large-cased'
-TRAIN_BATCH_SIZE = 16
+TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 4
+EPOCHS = 8
 NUM_SPLITS = 5
 MIN_LENTH = 0
 MAX_LENGTH = 256
@@ -129,58 +129,46 @@ class Classifier(nn.Module):
         hidden_dim = 160
         n_layers = 2
         output_dim = 128
-        drop_prob = 0.1  
-        model_config = 'bert_large_config.json'
-        self.config = BertConfig.from_json_file(model_config)
-        self.config.output_hidden_states = True
-        self.bert = AutoModel.from_pretrained(model_name, config=self.config)
-        self.cnn =  nn.Conv1d(self.bert.config.hidden_size*3, self.bert.config.hidden_size, 3, padding=1)
+        drop_prob = 0.1
+        self.bert = AutoModel.from_pretrained(model_name)
+        self.dropout = nn.Dropout(drop_prob)
+        # for bert only
+        self.linear = nn.Linear(embedding_dim, num_classes)
 
-        # self.rnn = nn.LSTM(self.bert.config.hidden_size, self.bert.config.hidden_size//2, num_layers=2,
-        #                     batch_first=True, bidirectional=True)
-        self.gelu = nn.GELU()
+        self.gru = nn.GRU(embedding_dim, hidden_dim, n_layers,
+                          batch_first=False, dropout=drop_prob)
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, n_layers,
+                            batch_first=False, dropout=drop_prob)
 
-        self.whole_head = nn.Sequential(OrderedDict([
-            ('dropout', nn.Dropout(0.1)),
-            ('l1', nn.Linear(self.bert.config.hidden_size*3, 256)),
-            ('act1', nn.GELU()),
-            ('dropout', nn.Dropout(0.1)),
-            ('l2', nn.Linear(256, 4))
-        ]))
-        self.se_head = nn.Linear(self.bert.config.hidden_size, 4)
-        self.inst_head = nn.Linear(self.bert.config.hidden_size, 4)
-        self.dropout = nn.Dropout(0.1)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.relu = nn.ReLU()
+        # for bert-gru-lstm
+        # self.linear = nn.Linear(2*output_dim, num_classes)
 
         nn.init.normal_(self.linear.weight, std=0.02)
         nn.init.zeros_(self.linear.bias)
 
     def forward(self, input_ids, attention_mask, token_type_ids):
-        # output, _ = self.bert(
-        #     input_ids=input_ids,
-        #     attention_mask=attention_mask,
-        #     token_type_ids=token_type_ids)
+        output, _ = self.bert(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids)
 
-        # output = output[:, 0, :]
-        # output = self.dropout(output)
-        # output = self.linear(output)
+        output = output[:, 0, :]
 
-        _, pooled_output, hs = self.bert(
-            input_ids, attention_mask, token_type_ids=token_type_ids)
+        # x = self.dropout(output)
+        # gru, h_gru = self.gru(x)
+        # gru = self.fc(self.relu(gru[:, -1]))
+        # lstm, h_lstm = self.lstm(x)
+        # lstm = self.fc(self.relu(lstm[:, -1]))
+        # concatenate = torch.cat(
+        #     (gru, lstm), 1)
+        # output = self.linear(self.relu(concatenate))
 
-        seq_output = torch.cat([hs[-1],hs[-2],hs[-3]], dim=-1)
-
-        # seq_output = hs[-1]
-
-        avg_output = torch.sum(seq_output*attention_mask.unsqueeze(-1), dim=1, keepdim=False)
-        avg_output = avg_output/torch.sum(attention_mask, dim=-1, keepdim=True)
-        # +max_output
-        whole_out = self.whole_head(avg_output)
-
-        seq_output = self.gelu(self.cnn(seq_output.permute(0,2,1)).permute(0,2,1))
-        
-        se_out = self.se_head(self.dropout(seq_output))  #()
-        inst_out = self.inst_head(self.dropout(seq_output))
-        return whole_out
+        #   # for bert only
+        output = self.dropout(output)
+        output = self.linear(output)
+        return output
 
 
 def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
