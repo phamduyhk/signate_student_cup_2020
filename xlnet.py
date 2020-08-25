@@ -43,8 +43,8 @@ TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'xlnet-large-cased'
-TRAIN_BATCH_SIZE = 1
-VALID_BATCH_SIZE = 8
+TRAIN_BATCH_SIZE = 32
+VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
 EPOCHS = 5
 NUM_SPLITS = 5
@@ -137,7 +137,7 @@ class Classifier(nn.Module):
         self.config.output_hidden_states = True
         self.config.hidden_dropout_prob = 0.1
         self.bert = XLNetModel.from_pretrained(model_name, config=self.config)  
-        self.bert = XLNetForSequenceClassification.from_pretrained(model_name)
+        self.bert = XLNetForSequenceClassification.from_pretrained(model_name, num_labels=4, config=self.config)
 
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
@@ -221,7 +221,7 @@ class Classifier(nn.Module):
         # logits = logits.squeeze(-1)
 
         # outputs = self.linear(logits)
-        return outputs
+        return outputs[0]
 
 
 def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
