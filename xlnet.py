@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, XLNetModel
+from transformers import AutoTokenizer, AutoModel, AdamW, XLNetModel, XLNetConfig
 import nlp
 
 SEED = 42
@@ -132,7 +132,12 @@ class Classifier(nn.Module):
         drop_prob = 0.1
         self.hidden_layers = [-1, -2, -3, -4]
         self.hidden_size = embedding_dim
-        self.bert = XLNetModel.from_pretrained(model_name)
+        xlnet_model_config = 'xlnet_large_config.json'
+        self.config = XLNetConfig.from_json_file(xlnet_model_config)
+        self.config.output_hidden_states = True
+        self.config.hidden_dropout_prob = 0.1
+        self.bert = XLNetModel.from_pretrained(model_name, config=self.config)  
+
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
         self.linear = nn.Linear(embedding_dim, num_classes)
