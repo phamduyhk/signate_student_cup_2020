@@ -206,12 +206,12 @@ class Classifier(nn.Module):
 
 
     def forward(self, input_ids, attention_mask, token_type_ids):
-        output = self.bert(
+        outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
-        hidden_states = output[1]
+        hidden_states = outputs[1]
         fuse_hidden = self.get_hidden_states(hidden_states)
         fuse_hidden_context = fuse_hidden
         hidden_classification = fuse_hidden[:, -1, :]
@@ -221,7 +221,7 @@ class Classifier(nn.Module):
         start_logits, end_logits = start_logits.squeeze(-1), end_logits.squeeze(-1)
 
         outputs = (start_logits, end_logits,) + outputs[2:]
-        return output
+        return outputs
 
 
 def train_fn(dataloader, model, criterion, optimizer, scheduler, device, epoch):
