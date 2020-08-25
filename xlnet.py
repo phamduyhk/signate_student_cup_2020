@@ -140,7 +140,7 @@ class Classifier(nn.Module):
 
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
-        self.linear = nn.Linear(embedding_dim, num_classes)
+        self.linear = nn.Linear(MAX_LENGTH, num_classes)
 
         self.gru = nn.GRU(embedding_dim, hidden_dim, n_layers,
                           batch_first=False, dropout=drop_prob)
@@ -160,7 +160,7 @@ class Classifier(nn.Module):
         weights_init.data[:-1] = -3
         self.layer_weights = torch.nn.Parameter(weights_init)
 
-        self.qa_start_end = nn.Linear(self.hidden_size, 2)
+        self.qa_start_end = nn.Linear(self.hidden_size, 1)
 
         def init_weights_linear(m):
             if type(m) == torch.nn.Linear:
@@ -217,10 +217,9 @@ class Classifier(nn.Module):
         hidden_classification = fuse_hidden[:, -1, :]
         # #################################################################### direct approach
         logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end)
-        start_logits, end_logits = logits.split(1, dim=-1)
-        start_logits, end_logits = start_logits.squeeze(-1), end_logits.squeeze(-1)
+        logits = logits.squeeze(-1)
 
-        outputs = (start_logits, end_logits,) + outputs[2:]
+        outputs = self.linear(logits)
         return outputs
 
 
