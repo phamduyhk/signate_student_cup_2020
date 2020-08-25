@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from transformers import AutoTokenizer, AutoModel, AdamW, XLNetModel, XLNetConfig
+from transformers import AutoTokenizer, AutoModel, AdamW, XLNetModel, XLNetConfig, XLNetForSequenceClassification
 import nlp
 
 SEED = 42
@@ -39,12 +39,12 @@ if torch.cuda.is_available():
     print("Device:", torch.cuda.get_device_name(current_device))
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-TRAIN_FILE = "./data/pseudo_train.csv"
+TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'xlnet-large-cased'
-TRAIN_BATCH_SIZE = 32
-VALID_BATCH_SIZE = 128
+TRAIN_BATCH_SIZE = 1
+VALID_BATCH_SIZE = 8
 NUM_CLASSES = 4
 EPOCHS = 5
 NUM_SPLITS = 5
@@ -137,6 +137,7 @@ class Classifier(nn.Module):
         self.config.output_hidden_states = True
         self.config.hidden_dropout_prob = 0.1
         self.bert = XLNetModel.from_pretrained(model_name, config=self.config)  
+        self.bert = XLNetForSequenceClassification.from_pretrained(model_name)
 
         self.dropout = nn.Dropout(drop_prob)
         # for bert only
@@ -211,15 +212,15 @@ class Classifier(nn.Module):
             attention_mask=attention_mask,
             token_type_ids=token_type_ids)
 
-        hidden_states = outputs[1]
-        fuse_hidden = self.get_hidden_states(hidden_states)
-        fuse_hidden_context = fuse_hidden
-        hidden_classification = fuse_hidden[:, -1, :]
-        # #################################################################### direct approach
-        logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end)
-        logits = logits.squeeze(-1)
+        # hidden_states = outputs[1]
+        # fuse_hidden = self.get_hidden_states(hidden_states)
+        # fuse_hidden_context = fuse_hidden
+        # hidden_classification = fuse_hidden[:, -1, :]
+        # # #################################################################### direct approach
+        # logits = self.get_logits_by_random_dropout(fuse_hidden_context, self.qa_start_end)
+        # logits = logits.squeeze(-1)
 
-        outputs = self.linear(logits)
+        # outputs = self.linear(logits)
         return outputs
 
 
