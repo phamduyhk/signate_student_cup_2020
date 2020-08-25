@@ -43,13 +43,13 @@ TRAIN_FILE = "./data/data_augmentation_using_language_translation.csv"
 TEST_FILE = "./data/test.csv"
 MODELS_DIR = "./models/"
 MODEL_NAME = 'bert-large-cased'
-TRAIN_BATCH_SIZE = 16
+TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 128
 NUM_CLASSES = 4
-EPOCHS = 4
+EPOCHS = 5
 NUM_SPLITS = 5
 MIN_LENTH = 0
-MAX_LENGTH = 256
+MAX_LENGTH = 192
 MAX_TEST_LENGTH = 128
 LEARNING_RATE = 2e-5
 
@@ -211,7 +211,7 @@ class Classifier(nn.Module):
             token_type_ids=token_type_ids)
 
         logits =outputs[0]
-        
+
         # hidden_states = outputs[2]
 
         # # bs, seq len, hidden size
@@ -467,7 +467,7 @@ submit["probs"] = final_prob
 if not os.path.exists("./output"):
     os.mkdir("./output")
 try:
-    submit.to_csv("./output/pseudo_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
+    submit.to_csv("./output/SC_{}_{}-{}_{}cv_{}ep.csv".format(str(MODEL_NAME),str(MIN_LENTH),str(MAX_LENGTH),str(NUM_SPLITS),str(EPOCHS)), index=False, header=False)
 except NameError:
     submit.to_csv("./output/submission.csv", index=False, header=False)
 submit.head()
