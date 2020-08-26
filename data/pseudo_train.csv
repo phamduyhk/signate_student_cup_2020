@@ -5551,6 +5551,7 @@ Update account status records and collection efforts,2980.0,4
 "Build, implement and maintain predictive models through their full lifecycle.",2982.0,1
 "Develop a talent acquisition (""TA"") strategy across the US which delivers a pipeline of talent for both current and future openings. Key to this strategy is finding creative ways to source talent, including a robust D&I agenda, and developing a recruiting protocol that allows us to get candidates through our process quickly but thoughtfully.",2983.0,4
 Work with Project Managers and other Tech Management to complete project sizings and estimates.,2984.0,3
+"Documenting user stories that are clear, concise and testable",2985.0,3
 Must have good writing/oral presentation skills.,2986.0,4
 Understand the capabilities of the embedded compute engine as related to vision services and applications.,2987.0,3
 Enables Machine Learning and Data Analytics in a scalable fashion,2988.0,1
@@ -5565,6 +5566,7 @@ Serves as liaison to management in the absence of supervision.,2995.0,4
 Dynamics 365/CRM Implementation (Full Life Cycle),2998.0,4
 "Design and build model execution pipeline with model validation, model monitoring, model scoring, model decay and retraining",2999.0,2
 Conduct research on cutting-edge techniques and tools in machine learning/deep learning/artificial intelligence,3000.0,2
+Perform analysis of proteins and the impurities or raw materials associated with their production using various analytical techniques,3001.0,1
 Statistical model performance and real time monitoring and alerting,3002.0,1
 Ability to interpret and implement roadmap plans and enterprise-level Architecture,3003.0,4
 Develop software verification plans and quality assurance procedures,3004.0,3
@@ -5581,6 +5583,7 @@ Exposure and experience with Cloud computing.,3014.0,3
 Prepare accurate financial statements and schedules in accordance with established deadlines.,3016.0,4
 "Applies proven communication, analytical and problem-solving skills to identify, communicate and resolve issues.",3017.0,3
 Demonstrates product expertise and industry/competitor offerings,3018.0,3
+"Develop competitive proposals and follow-on programs for R+D customers, including DARPA, ONR, AFRL, ARL, NASA, and other government agencies and industry primes",3019.0,3
 Assumes responsibility for and takes action regarding any quality control or quality assurance issues as it pertains to specific job duties.,3020.0,3
 Works closely with the Utility Manager in contact with Dominion (DVP).,3021.0,4
 Develop and maintain a system architecture and standards from firm wide operations,3022.0,3
@@ -5594,6 +5597,7 @@ Develop advanced concepts in AI/ML with a focus on autonomous system application
 "Independently mine medical claims, eligibility, and clinical operations data to track key performance metrics and identify opportunities.",3032.0,1
 "Inform, influence, support, and execute our product decisions and product launches",3034.0,3
 "Embed with AI/ML project teams to provide deep computing and software engineering expertise (code review and coding standards, debugging, performance optimization, etc)",3035.0,2
+Use Data Science and engineering techniques to satisfy IC DoD customer requirements.,3036.0,1
 Participating in and possibly leads conference calls with customers; knows their audience and articulate accordingly,3037.0,4
 "Responsible for full life-cycle development including requirements analysis, software architecture, design, coding, unit test, integration and formal qualification.",3038.0,3
 "Develop flowcharts, layouts and documentation to identify requirements and solutions",3039.0,3
@@ -5627,6 +5631,7 @@ Work with key stakeholders and understand their needs to develop new or improve 
 "Perform tasks of senior level technicians, specialists, and or managers not performed at level 3 due to the size and/or complexity of the tasks.",3067.0,3
 Reviews technical solution articles for accuracy and completeness and give feedback to the authors,3068.0,3
 Provide scientific leadership on developing and applying computational models for resistance risk analysis to enable decision support for R&D.,3069.0,1
+You will develop and apply computational models of biotic stress mechanisms and the effects on crop health and performance for evaluations of the resistance risks associated with insecticidal product use patterns in defined crop and pest scenarios.,3070.0,1
 Performs financial/accounting services primarily supporting General Accounting Accounts Receivables/Billing and Corporate reporting.,3071.0,4
 Perform large-scale experimentation and build data-driven models to answer business questions,3072.0,1
 "Delivery of Digital Solutions and capabilities as per Digital strategy and roadmaps with excellence in execution, assuring quality, and user adoption.",3074.0,4
@@ -5639,6 +5644,7 @@ Drive change management initiatives and the required business transformation.,30
 Serve as advisor or coach to new or lower level analysts,3082.0,1
 "Performs a variety of tasks ranging from repetitive to non-repetitive production assembly operations on electronic and/or mechanical assemblies and subassemblies such as modules, boards, panels, drawers, frames, and cables.",3083.0,3
 Timely and accurate reporting of project status,3084.0,3
+Oracle 12C in a multi-user production environment.,3085.0,3
 "Google GCP Consultant - Providing Engineering Services for Google Advanced Services, coordinating engagement strategies, and qualifying technical resources",3086.0,3
 Troubleshoot and solve complicated software issues.,3087.0,3
 Acts as a remote customer advocate to champion specific customer needs in collaboration with field team,3088.0,4
@@ -5649,8 +5655,10 @@ Coordinates the development and maintenance of internal procedures and work inst
 Participates in every aspect of the implementation from analyzing the customer's business requirements to configuring Microsoft Dynamics 365 ERP applications to meet the customer's needs and data requirements,3093.0,4
 Create algorithms to discover causal relationships within high-dimensional genomic datasets,3094.0,1
 "Design documentation, software requirements definition; create test plans and test reports; Present design concepts, radar performance, tradeoff studies, and algorithms to team members, management and customers",3095.0,3
+Develop websites and other interactive web projects optimized for millions of annual users,3097.0,3
 Execute full software development life cycle (SDLC),3098.0,3
 "Manage KPI's related to cost per hire, cycle time, etc.",3099.0,4
+"End to end experience defining solutions, design and implementation in Customer Marketing, contact strategy, segmentation, adaptive modelling, campaign management",3100.0,4
 "Design, develop and program methods, processes, and systems to consolidate and analyze unstructured, diverse ""big data"" sources to generate actionable insights and solutions to support our SmartHub program.",3101.0,1
 Build predictive models and perform predictive analytics,3102.0,1
 "Provides expertise in end to end Financial Systems architecture landscape, including governance, KPIs and business value to technology investment ratio.",3103.0,1
@@ -5673,10 +5681,12 @@ Prepare and submit assigned journal entries and account reconciliations.,3119.0,
 Respond to client inquiries and ensure that the dealership provides an exceptional experience to every client.,3120.0,4
 Assist with monthly financial reporting package sent to management.,3121.0,4
 "Design, test and implement Microsoft Dynamics 365 ERP system financials configuration.",3122.0,4
+Create a constrained-random verification environment using SystemVerilog and UVM.,3123.0,3
 "Assist management with strategic efforts, portfolio management, and value delivery",3124.0,4
 The Data Scientist Analytics role has work across the following four areas:,3125.0,1
 Piping and processing massive data-streams in distributed computing environments such as Hadoop to facilitate analysis.,3127.0,1
 Supporting reduction-in-force and unemployment claim determination activities,3129.0,4
+Resolve architectural and technology choices balancing strategic integration and urgent business needs.,3130.0,4
 "Coach, mentor, and guide data scientists to advance their career development in both technical and non-technical areas",3132.0,1
 Serve as one of the DevSecOps SMEs on the program,3133.0,3
 Actively engage with the core team by participating in business process discussions,3134.0,4
@@ -5685,6 +5695,7 @@ Experience in Relational Database Management Systems,3137.0,3
 Provide business case writing expertise and lead the compilation and review of business case documents. Develop templates and tools to assist in the compilation and review of business cases,3139.0,4
 Design and deliver dynamic product demonstrations,3140.0,3
 Manage the application on AWS or Azure Cloud is must.,3141.0,3
+"Maintain current industry knowledge of relevant concepts, practices and procedures",3142.0,3
 "Plan, develop and make enhancements to a strategic financial modeling platform, which will be built on latest AWS Cloud technology using Python, C++, Cassandra, RedShift, Big Data and AI technologies.",3144.0,1
 Division support may also include serving as a subject matter expert in all things electronics during engagements with our automotive customers.,3145.0,3
 Work with internal teams and external vendor partners to help shape strategic roadmaps for their future product integrations.,3146.0,3
@@ -5693,6 +5704,7 @@ Performing other related duties as assigned,3148.0,3
 "In partnership with HR Business Partners, assist managers in thinking through the best way to staff their openings - be a proactive partner versus a reactive recruiter.",3149.0,4
 Coach teams & leaders on the   mindset change   required to transform their existing development practices to follow agile methodologies,3150.0,3
 Work with the Broker Dealer Operations teams to support and enhance the trading system,3152.0,4
+"Experience crafting software architecture documents, proven efficiency influencing the cross-organizational teams to align with your direction.",3153.0,3
 Support the Security Programs that originate from Customers Chief Compliance and Chief Information Security Office,3154.0,4
 Implements new technology solutions to secure agency information security assets and/or confidential data as directed by CISO.,3155.0,3
 Determines which tool(s) to use to resolve issues including running tests and be able to identify when deviation from the available troubleshooting tools and documents is appropriate,3156.0,3
@@ -5712,10 +5724,13 @@ Drive the creation of new models and capabilities that will leapfrog traditional
 Develop a vision and roadmap for analytics across a product or functional group.,3172.0,1
 Ensures that enterprise architects are addressing all data requirements in their respective projects and solutions,3173.0,1
 Provide training and assistance,3174.0,4
+"Help maintain code quality, and organization",3175.0,2
+Work with team members to assist with data-related technical issues and support their data product needs.,3176.0,1
 Identify efficiencies in work process and innovative approaches,3177.0,4
 "It will be used to build and deploy Artificial Intelligence, Machine Leaning and Financial models by CIO Quant modelers and core team developers.",3178.0,1
 "Develop and use advanced software programs, algorithms, query techniques, model complex business problems, and automated processes to cleanse, integrate, and evaluate data sets.",3179.0,1
 You will have thorough knowledge of all dealership products and services.,3180.0,4
+Create value-added linkages with customers and look for operational efficiency for both our customers and Trouw Nutrition USA,3181.0,4
 Research and develop machine learning systems that help train or serve models,3183.0,2
 "Leverages an established, international network with academic, public health and industry Key Opinion Leaders to continuously gather competitive intelligence and influence externally on Data Science for Vaccinology advances.",3184.0,1
 "Supports Product Owners and product teams to deliver value continuously, fostering and maintaining close links with customers, related Solution groups e.g. Established Products and Core Tech",3186.0,3
@@ -5723,17 +5738,22 @@ Research and develop machine learning systems that help train or serve models,31
 "Experience solving business problems through machine learning, data mining, and statistical algorithms",3188.0,1
 Collect and Approve all the electrical needs for the construction phases.,3189.0,3
 "Deep knowledge of the principles, methods, and state-of-the-art techniques used in data science, operations research, and decision support, including statistical inference, correlative analysis, machine learning, dynamic programming and approximate dynamic programming. Skill in developing efficient and robust computer codes for Navy-relevant problems.",3190.0,1
+"Hands-on experience developing and delivering structured, methodology projects.",3191.0,4
 Identify meaningful insights and interpret and communicate findings and recommendations across teams and to senior management.,3192.0,1
 Ensures appropriate data testing is completed and meets test plan requirements.,3194.0,3
 Negotiate complex scenarios and challenges and devise courses of action to resolve situations with predictable outcomes in supporting customer data needs.,3195.0,4
+"Schedule and track project timelines, milestones and deliverables using appropriate tools.",3196.0,4
 "Stay abreast of new techniques, tools and methodologies used to solve cloud security problems",3197.0,3
+Identify security design gaps in existing and proposed architectures and recommend changes or enhancements,3198.0,3
 "A minimum of five years of hands-on experience with Big Data applications, such as Hadoop and associated applications (e.g., administration, CM, monitoring, performance tuning, etc.).",3199.0,1
+"Develop and present complex multi-tier cloud applications on leading cloud service provider platforms e.g. Amazon AWS, Microsoft Azure and Google Cloud, and demonstrating customer use-case compliance via proof of technology engagements.",3200.0,3
 "Ensuring a clear dependency chain, in regard to the app logic as well as the file system.",3201.0,3
 Design and develop software programs and database objects.,3202.0,3
 "Working knowledge of engineering drawings, GD&T, blueprints, production plans and/or work instructions.",3203.0,3
 "Support PM/PE System & Engineering Design Reviews (BOMs, Drawings & Documents)",3204.0,3
 "Follow up on change requests, assess the impacts on existing applications and make recommendations in this regard.",3205.0,4
 "Lead teams with diverse skills, including management consultants, software engineers, data scientists, and instructors, to develop high-quality deliverables in a fast-paced environment.",3206.0,1
+"Work effectively in teams, managing and leading teams",3207.0,2
 Solid web development experience building and launching products using modern SPA front-end techniques,3208.0,3
 "Evaluate and use advanced software programs, algorithms, query techniques, model complex business problems, and use automated processes to cleanse, integrate, and evaluate data sets for customer needs.",3209.0,1
 Define project success criteria and disseminate them to involved parties throughout project life cycle.,3210.0,4
@@ -5761,6 +5781,7 @@ Measure model performance and continuously improve over time.,3233.0,2
 Mentors Data Science Solution Consultants.,3234.0,1
 Function as a technical expert across multiple project assignments.,3235.0,3
 works with AWS Cloud services to ensure that data streams are funneling into the correct channels to ensure they are enabling a scalable dashboard for data scientist analysis.,3236.0,1
+"Comfortable communicating with large groups of cross functional teams, including the leadership of those teams.",3237.0,2
 Understand how OPA communicates via Assess service API and Web Services to other systems.,3238.0,3
 "Validate and prepare detailed specifications and documentation of network environments, provide knowledge transfer to other technical staff who will support the environment when transitioned to production",3239.0,3
 Collaborate with Product Owner to review the proposed business requirements and facilitate detailing the technical requirements supporting the business requirements. Subsequently work with the PO and TL to write technical stories that meet the business requirements.,3241.0,4
@@ -5770,6 +5791,7 @@ Application of Information Security Principals,3243.0,4
 Ability to analyze issues from system documentation and recommend solutions.,3245.0,3
 "Extensive experience in API development & frameworks in the Java ecosystem, Messaging and Spring",3246.0,3
 Provide personalized support to emails and phone calls from customer points-of-contact.,3247.0,4
+Create and adhere to acceptable budgets and address overages as they present themselves,3248.0,4
 Able to prioritize work efforts.,3249.0,4
 Advise and educate Business stakeholders on the Enterprise's process for capital and operating investment initiatives and facilitate business case workshops.,3250.0,4
 Specialties in utilizing data in developing physics-based and time-series models,3251.0,1
@@ -5781,6 +5803,7 @@ Partner with visual programs within our organization to evolve and apply new des
 "Ability to provide efficient, timely, reliable and courteous     service to customers.",3257.0,3
 Hands on software engineering and development,3258.0,3
 Communicate market trends and competitive intelligence to sales and marketing management,3259.0,4
+Serve as an advisor and partner to the senior management team: proactively seek out opportunities for innovation and present new ideas and solutions on behalf of the team,3260.0,4
 Contributes to development and testing of data science workflows implemented on High Performance Computing and Cloud systems,3261.0,1
 Must be able to obtain and maintain an active Top Secret/SCI clearance.,3262.0,3
 Prepare sample data and unit test plans.,3263.0,3
@@ -5818,8 +5841,10 @@ Ability to convert business requirements into a technical design and implementat
 "Dig in by extracting data and performing segmentation and statistical analyses on large population datasets (using languages such as R, SAS, SQL, and Python)",3303.0,1
 "Read and interpret engineering drawings, parts lists, and production bills of materials",3304.0,3
 "Build, develop, and grow any business relationships vital to the success of the project. Conduct project post mortem and create a recommendations report in order to identify successful and unsuccessful project elements.",3305.0,4
+Have a passion for collaborating across different business and technology roles to provide AI and Machine Learning solutions.,3306.0,2
 Provides high-level controllership/evaluation of all output produced to ensure established targets are met. Determines the continuous improvement opportunities of current predictive modeling algorithms.,3307.0,1
 "Responsible for the analysis of bioinformatics data through the use of machine learning techniques, computational methods, and cloud resources to facilitate analysis such as next generation sequencing, functional genomics data, drug data, natural language processing, molecular dynamics simulations, and image processing",3308.0,1
+"Aid in the establishment of agile teams, programs and value streams and initial coaching to a variety of key stakeholders",3309.0,4
 "Work with customer to gain an understanding of their goals, priorities, processes and challenges related to the supported applications.",3310.0,4
 "Be responsible for producing business requirement artifacts - including Epics, Features, User Stories, Program Backlog, Use Cases, Business and Message Rules, Supplemental (Non-Functional) Specifications, and collaborate with User Experience Group for User Interface Design Specifications - for the large and complex projects.",3311.0,3
 "Collaborate across a team of Data Scientists, Data Administrators, and Data Engineers to produce work products and work with cross-discipline teams to ensure connectivity between various data sources and business problems.",3312.0,1
@@ -5835,6 +5860,7 @@ Identify and report any observed Abnormal Operating Procedures per training.,332
 Develop algorithms and analytical techniques to improve business performance.,3323.0,1
 "Develop legacy data migration strategies, Develop modernization roadmaps, strategies and recommendations based on business needs, a technical evaluation of the legacy system, available technology, and the future state architecture",3324.0,4
 "Coordinate project teams of data scientists and supporting roles, acting as the primary point of contact in delivering end-to-end innovative, high-quality data solutions with measurable business value",3325.0,1
+"Technical Subject Matter Expertise (SME) on Oracle and SQL DBs, and .Net components that execute on these platforms.",3326.0,3
 "Must possess good experience in designing applications on containers, micro-services, API orchestration with their eventual deployment on cloud.",3327.0,3
 Research technical problems and suggest improvements for web applications.,3328.0,3
 "Identifies drivers of insurance costs, understanding the economics of customers' behavior and estimating the expected losses for segments of risks using advanced statistical and analytical techniques on large data sets.",3329.0,1
@@ -5958,6 +5984,7 @@ Be a mentor/guide and pilot for our LIFE SCIENCE clients in their digital enable
 Developing software solutions using existing ML/AI frameworks,3459.0,2
 "Must be responsible for creating and maintaining Architecture artifacts (Solution architecture Diagram, Architecture Patterns, Solution Design)",3460.0,3
 Recent hands on experience w/ Alteryx and Python,3463.0,3
+Maintain and keep the MLOps pipeline operational,3464.0,2
 Must be proficient with the Microsoft Office Suite.,3467.0,3
 Create Vision Process Measurement Files for evaluation of Laser Process and Platform outputs,3469.0,3
 "Closely collaborate with agile delivery , business integration teams & product owners to build data sets based on feature delivery",3470.0,1
@@ -5976,6 +6003,7 @@ Translates mission needs into an end-to-end analytical approach to achieve resul
 "Applies machine learning and other analytical modeling methods to develop robust and reliable analytical models, including visualizations, within the software development environment.",3488.0,1
 Translate application storyboards and use cases into functional application,3489.0,3
 "Responsible for analysis, design, development, test planning/execution, deployment, and sustainment (defect resolution/maintenance) of SAS models built using SAP BW/HANA data flows, the output of which is visualized in SAP Lumira, Webi, and Qlik Sense.",3490.0,1
+Work with Admin to support SharePoint migration 2010 to 2013 and to 2016,3491.0,3
 Recommend appropriate technology platform to support business processes and information flows.,3493.0,4
 Demonstrated experience using the scripting language Python.,3494.0,3
 Must be passionate about technology and committed to continual improvement.,3495.0,3
@@ -5995,13 +6023,16 @@ Engage with business stakeholders to design and own end-to-end solutions to empo
 Implement monitoring solution(s) for the Big Data platform to monitor health on the infrastructure.,3511.0,1
 Implement logic for segmenting patient data according to customer-defined rules,3512.0,1
 "Support the architecture, design, and development teams in their solution delivery activities.",3513.0,3
+Coordinate model refit with data scientists,3514.0,1
 Provide the program manager with timely metrics and audit outcomes to gauge progress towards quality objectives,3516.0,4
 "Lead projects, allocates and manages resources and manages the work of less experienced staff.",3517.0,4
+"Operate high accuracy GPS units, smartphone applications, and computer software to record survey data.",3518.0,1
 Assist our team in conceiving of and developing future data product and solutions for our customers,3519.0,1
 "Work with various internal groups to deliver architecture, design, development, and test artifacts.",3520.0,3
 Transforming product requirements into clean well-written code,3521.0,3
 Position will support projects using analysis methods including classical and multivariate statistics and machine learning.,3522.0,1
 "Work with statisticians, data engineers, application developers, and related groups to inform on and showcase capabilities of emerging technologies and to enable the adoption of these new technologies, computational learning and associated algorithms",3523.0,1
+"Define project scopes, plans, goals and deliverables that support business goals in collaboration with senior management and stakeholders.",3524.0,4
 Lead analytical projects and pilots for upgrades or enhancements.,3525.0,1
 Participate in plant and equipment maintenance including the preparation and control of a scheduled maintenance program and recommendation of required maintenance.,3526.0,3
 Able to use detailed specifications to test integrations.,3527.0,3
@@ -6045,6 +6076,7 @@ Determine and employ the most appropriate research design for data collection an
 "Requires the ability to develop testing and communication scripts using Python, Bash, Powershell, Perl, etc.",3567.0,3
 "Creating self-contained, reusable, and testable modules and components",3568.0,3
 Determine and select suitable equipment from our product lines and develop process flow sheets in cooperation with internal resources for the project as needed,3569.0,3
+Report all leaks to supervisor and/or Gas Company under contract.,3570.0,3
 Foster the professional development of Interns and Co-ops through on-the-job training and consultation,3571.0,4
 Will help to drive the requirements and vision for the customer/product/capability experience in conjunction with other scrum resources,3572.0,3
 "Design wireframes, mockups, vector graphics, application interfaces, and other various web assets",3573.0,3
@@ -6078,13 +6110,16 @@ Contribute to an atmosphere of cross-functional teamwork within the organization
 Comply with project plans and industry standards,3602.0,3
 Experience with reporting/visualization of machine learning model metrics and data pre-processing tools like GCP's Dataflow,3603.0,1
 "Provide subject matter expertise to the CABAIL Team in developing Measures of Performance (MOPs), Measures of Effectiveness (MOEs), and other analytical metrics to assess achievement of desired future force effects.",3604.0,1
+"Gather requirements and ultimately setup a fully functional development, test, and production environment to deliver various modules C/V/M/F scope to the client",3606.0,4
 Contributes with educational material and expertise for training initiatives across the program,3607.0,4
 Conducts program or project analysis using statistical techniques to prove or disprove the efficacy of the project,3608.0,1
 Perform solution architecture for Robotic Process Automation (RPA) and related domains.,3609.0,3
 "Utilize company procurement software to generate request for quotes and purchase requisitions, as well as create and prepare reports based on material data",3610.0,4
 Ability to achieve Polygraph a requirement.,3611.0,3
+"Proven analytical skills to identify and analyze security requirements and relate them to appropriate security policies, standards and/or controls in order to determine associated risk.",3612.0,3
 "Manage the development, qualification, and release of mobile apps to stores",3613.0,3
 Provide insights based upon monitoring results,3614.0,1
+Negotiate complex scenarios and challenges and devise courses of action to resolve situations with predictable outcomes.,3615.0,4
 Must demonstrate a knowledge of all local building codes,3616.0,3
 "Maintaining TM1 user administration - AD, BI Gateway, TM1 Administration Service, TM1 user access",3617.0,4
 Create and maintain an archive of field history tables,3618.0,1
@@ -6112,6 +6147,7 @@ Collaborate with Integration team to analyze new data sources and implement syst
 "Identify bottlenecks and bugs, and devise solutions to these problem",3643.0,3
 "Strong data analytical background, attention to detail along with structured organization and planning skills.",3644.0,1
 Produce specifications and determine operational feasibility,3645.0,3
+"May function in an educator and provides instruction and training in theory, technical skills, safety protocols, and the application of laboratory test protocols to students, employees, residents, etc.",3646.0,3
 "Meets regularly with IT management, program, vendor, CISO team, to ensure to-be implemented or implemented security protocols are meeting expectations.",3647.0,3
 "Experience with Microsoft development tools and technologies and API development and management is required. Familiarity with application performance monitoring, specifically Microsoft Application Insights is a plus.",3649.0,3
 "Develop and maintain strong positive relationships with key contacts across the Enterprise. Be a key point of contact for business case inquiries, anticipate and be responsive to needs and issues arising. Proactively analyze, prioritize and action requests; problem solve and act decisively to facilitate resolution",3651.0,4
@@ -6147,6 +6183,7 @@ Lead execution of advanced technology R+D programs in Principal Investigator rol
 "Ensure that server operating systems, virtual environments, and related installations and configurations adhere to DOD Intel Community processes. This includes all necessary Security Configurations including IAVAs and OS Patches.",3685.0,3
 "Participate in ISO audits, resolve procurement and proposal PTRs, and implement associated process improvements",3686.0,3
 Demonstrate acute business acumen to enable high-bandwidth conversations with stakeholders across target organizations,3688.0,1
+Analysis and recommendation of new or different technologies to enhance current systems.,3689.0,3
 Experience in Design and Development using word and excel plugins for OPA.,3690.0,3
 "Building machine learning models for classification, entity extraction, and regression modeling",3691.0,1
 Deployment of algorithms as minimum viable products focusing on early customer feedback,3692.0,1
@@ -6166,6 +6203,8 @@ Interpret large and complex datasets and define appropriate applications to deri
 "Produce written reports (e.g., SOP, OMC, client reports)",3709.0,4
 Supports the development team researching system related issues.,3710.0,3
 Use Software Configuration Management tools,3711.0,3
+Provide subject matter expertise on cloud computing best practices and how the Cloud Platform solution supports those practices.,3712.0,3
+"Utilize industry standard and internal benchmarks to characterize the system to drive framework configurations/tuning (devfreq, cpuidle, EAS, thermal mitigation, etc.) as well as use case optimizations.",3713.0,3
 "Lead the design, implementation, and continuous delivery of an insights data pipeline supporting the development and operation of custom analytic products/services across the organization.",3714.0,1
 Engage with business stakeholders to design and own end-to-end solutions to empower data driven decision making.,3715.0,1
 "Lead analytic approaches; integrate solutions collaboratively into applications and tools with data engineers, business leads, analysts and developers.",3716.0,1
@@ -6173,6 +6212,8 @@ Engage with business stakeholders to design and own end-to-end solutions to empo
 "Provides direction to development teams in areas of project scheduling, technical direction and application development standards.",3718.0,3
 "Assist in maintenance and preparation of required documentation, reports, procedures and training to meet applicable safety, environmental and health regulations.",3719.0,3
 Done extensive data ingestion work,3720.0,1
+Maintains regulatory knowledge and awareness as it pertains to specific job duties.,3721.0,4
+"Use your passion for delivering high-quality product and services and writing clean, solid, readable code that scales and performs well",3722.0,2
 Responsible for software development life cycle for both new applications and modifications to existing ones,3723.0,3
 "Assist in the manufacture and testing of components, assemblies and systems as required",3725.0,3
 Develop custom data models and algorithms to apply to data sets and use predictive modeling to increase and optimize AFCO outcomes,3726.0,1
@@ -6183,6 +6224,7 @@ Support the budget preparation process.,3730.0,4
 Develop and optimize big data pipelines for data scientists (requires a basic understanding of data science concepts and ML),3733.0,2
 Work with Product and Engineering teams to understand and contribute to functional and technical requirements,3735.0,3
 "Provides data analytic support to VBA and other stakeholders with reports, analytics, and with other ad hoc requests.",3736.0,1
+Deploy your algorithms as production services,3738.0,2
 Participates in evaluation and monitoring of success of training programs. Follows-up to ensure training objectives are met.,3739.0,4
 Applies systems analysis techniques and procedures to determine hardware or software systems functionality,3740.0,3
 Solid knowledge of training and tuning topic modelling algorithms like LDA and NMF.,3741.0,1
@@ -6204,6 +6246,7 @@ Ability to solve problems involving several options in situations.,3756.0,4
 Examine the infrastructure of the legacy system to gain an understanding of its compatibility with the desired future state.,3758.0,4
 Assumes responsibility for good documentation practices and maintains clear and legible records.,3759.0,3
 Developing the data analytics model,3760.0,1
+"Participate and promote architectural initiatives, balancing long-term velocity with short-term customer needs",3761.0,2
 Enhancing data collection procedures to include information that is relevant for building analytic systems,3762.0,1
 "Strong technical, analytical, and communication skills including the ability to work individually and work in a team environment building consensus and mentoring fellow team members",3763.0,3
 "As a 24X7X365 organization, incoming call rotation, shift work, holidays, weekends and on-call responsibilities may be required",3764.0,3
@@ -6227,6 +6270,7 @@ Lead interface with clients to understand functionality,3781.0,3
 Experience in deploying OPA rule bases in a large integrated environment.,3782.0,4
 "Advanced data analytics, data and knowledge integration for hypothesis generation;",3783.0,1
 Prepare punch-lists and field observation reports with periodic supervision,3784.0,3
+Ability to present decisioning concepts and benefits to stakeholders ranging from Marketing heads and vice presidents to the operations team,3785.0,1
 Develops studies that evaluate new business models for customer retention and growth initiatives as well as estimate the lifetime value of customer segments.,3787.0,1
 All resources will report to the Client Project Manager and Meridian Program Manager,3788.0,4
 "Provide expertise in exploratory data analysis, pattern discovery and advanced analytical techniques.",3789.0,1
@@ -6239,6 +6283,7 @@ Direct multiple Contractor and subContractor teams through to project completion
 "Build, deploy, and run Production ML pipelines and services that are tightly integrated with the company platform to serve patients",3796.0,2
 Research solutions and provide support and guidance in response to customer questions and issues.,3797.0,4
 "Maintain and report on statistics of model usage, errors, and exceptions.",3798.0,1
+Train and mentor junior scientists,3799.0,2
 "Provide effective, constructive feedback to the delivery leader",3800.0,4
 This position includes additional responsibility in a limited role as Onsite IT Jr. Project Manager/LAN Consultant.,3801.0,3
 Ensures appropriate data testing is completed and meets test plan requirements.,3802.0,3
@@ -6251,6 +6296,7 @@ Complete training and pass tests to become Operator Qualified (training provided
 "Identify and customize, if necessary, Commercial Off the Shelf (COTS) Information Technology (IT) tools for administration and data collection, or to leverage, support, and integrate the process with tools built for the AF and/or its component elements.",3810.0,4
 "Ensures that work is accurate and complete, processed in a timely manner with proper details, spelling and grammar.",3811.0,1
 "Has familiarity with data wrangling, analytics, and visualization software and programming languages, including analytics methods for big data.",3812.0,1
+Design experiments to solve sophisticated problems with code,3813.0,2
 "May assist in facilitating meetings, identifies and analyzes system requirements, project scope, requirements, and deliverables.",3814.0,3
 Training and Mentoring Engineers to take on Cloud and DevOps projects,3815.0,3
 "Serves as a consultant and external spokesperson for the Finance organization on major matters pertaining to policies, plans and objectives.",3818.0,4
@@ -6265,11 +6311,13 @@ Serves as a technical expert and provides complex technical guidance to junior t
 The ROCm software stack is an open source platform posted in github repo.Familiarity with github and ROCm or NVIDIA CUDA would be a plus.,3827.0,3
 "Perform miscellaneous service duties such as checking on a daily basis: oil, water, fuel and air in tires.",3828.0,3
 "Good knowledge of relational database, specifically Oracle (SQL - PL/SQL), XML, SOAP/REST, Java, JavaScript, Spring, JSP, Hibernate, JDBC.",3829.0,1
+Recommends solutions and improvements.,3830.0,3
 "Experience with workflow analysis, IBM BPM or other business process management/workflow tools.",3832.0,4
 "Knowledge of statistical techniques such as various regressions, distributions, panel data, etc.",3833.0,1
 Responsible for working with vendors and internal teams on new implementation and day-to-day support.,3834.0,3
 Develop and implement artificial intelligence and machine learning models to solve complex data problems,3836.0,1
 "Assign tasks to developers; manage workload, create forecasts",3837.0,1
+"Maintain and create roadmaps, project plans, workflows and more",3838.0,4
 "In support of programs, the Solutions Architect is responsible for technical performance on assigned programs and will serve as the single point-of-contact with the program office for technical matters and issues.",3839.0,3
 "Maintaining Improvements roadmap and delivering new features, as well as integrated solutions",3840.0,3
 Deploy programs and evaluate user feedback,3841.0,3
@@ -6286,17 +6334,21 @@ Report to higher level management on Quality Achievement and act as liaison for 
 "In conjunction with Business Development & Sales (BDS) management, develop concepts for a successful bid, based on the Unique Selling Proposition (USP) of our products and services.",3855.0,4
 "Use one or more analytical tools from a suite of mathematical/application tools to perform appropriate analysis on specified product, transaction that has multiple variables affecting potential outcomes.",3856.0,1
 "Provide support to application engineers using deployed VMs. Tasks include documentation, contributing to engineering and provisioning, monitoring of system performance, operations, maintenance, management of VMs.",3857.0,3
+Experience with Data Conditioning & Data Wrangling,3858.0,1
 "Follows the laboratory's procedures for specimen handling and processing, test analyses, reporting and maintaining records of patient test results.",3860.0,3
 Identify meaningful insights and interpret and communicate findings and recommendations across teams.,3861.0,1
 "Experience on Pega CPM, Smart Investigate frameworks preferred",3863.0,1
+Become part of this unique opportunity to make history defining the evolution of cloud computing.,3864.0,3
 We will teach you how to maintain an ongoing client database to capture repeat business.,3865.0,4
 Translates business questions/problems into analytical questions and delivers analytic insights back to the business.,3866.0,1
 Performs database performance tuning and data protection processes to ensure the data is available and maximizing all database up-time,3867.0,3
 "In support of business development, the Solutions Architect will lead the development and demonstration of strategic solutions aligned with business strategy. The SA will lead use-case development and operational analysis, system or product design, integration and test through award.",3868.0,4
+Building ETL pipelines from scratch,3870.0,2
 "Provides guidance and input on business unit restructures, workforce planning and succession planning.",3871.0,4
 Applies technical knowledge to analyze and use highly technical troubleshooting tools and content and analytical practices; uses operational and diagnostic procedures to diagnose and resolve issues in unique and often complex customer environments,3872.0,4
 Project management of software validation activities and deliverables,3873.0,3
 "Lead the CABAIL team in identifying, developing, and assessing alternative data sources for integration into the data collection efforts.",3874.0,1
+"Be engaged throughout the whole project life-cycle, from Inception through post-Install Transition.",3875.0,3
 Monitor customer support cases and coordinate response to accelerate time to resolution.,3876.0,4
 "generalized linear model (GLM)/regression, random forest, boosting, trees, text mining, hierarchical clustering, deep learning, convolutional neural network (CNN), recurrent neural network (RNN), T-distributed Stochastic Neighbor Embedding (t-SNE), graph analysis, etc.",3877.0,1
 Assist management in the recruiting process in order to build a high-functioning Data Science team,3878.0,2
@@ -6305,11 +6357,13 @@ Working with cross-functional teams with data at all stages of the analysis life
 Support product development and oversee technical delivery of projects,3881.0,3
 "Attend daily scrum calls, attend requirements reviews, tech reviews, user story development  Sync with offshore team members",3882.0,3
 Ability to do trade-offs between memory and CPU constraints and optimize performance in embedded computing environments.,3883.0,3
+Utilize student feedback and experimentation to continuously improve teaching and assessment methods,3884.0,4
 Provide workshops and training events for customers and industry leaders on emerging technologies in Public Cloud,3886.0,3
 "Analyze raw data: assessing quality, cleansing, structuring for downstream processing",3889.0,1
 Assist with setting appropriate timelines and milestones for our most complicated technical projects.,3890.0,3
 Knowledge of connected vehicles and/or autonomous vehicles and its use-cases.,3891.0,2
 "Assumes responsibility for participation in continuing education, professional development and required annual competency assessment.",3892.0,4
+Provide operational guidelines to ensure projects are completed within the appropriate framework.,3893.0,4
 Obtain patents and publish research in prestigious journals and conferences.,3894.0,2
 Hands on experience in developing embedded camunda vs stand alone deployment of camunda workflow.,3896.0,3
 "Leading application teams working on the OpenShift platform in areas such as resource requirements, capacity analysis, and troubleshooting support",3897.0,3
@@ -6371,8 +6425,10 @@ Monitor accounts to identify outstanding debts,3957.0,4
 Data science and Bioinformatics algorithm development,3959.0,1
 Work with our application development team to effectively communicate front-end design decisionsand user experience,3960.0,3
 "Coach, mentor, motivate and supervise project team members and contractors, and influence them to take positive action and accountability for their assigned work.",3961.0,4
+"Perform data manipulation, business analysis, and quantitative modeling to research and design automated solutions",3962.0,1
 Helps develop and participate in presentations and informal training for other TSEs,3963.0,4
 "Program manage technology launches and feature customizations across multiple products simultaneously, providing transparent support and launch schedules.",3964.0,3
+Strong experience in chatbots and natural language processing (NLP).,3965.0,1
 Prepare Technical Specifications and ensure delivery of objects per timelines,3966.0,3
 Apply project/team leadership and problem-solving skills to establish and promote best practices within the team,3967.0,3
 "Understanding organization business strategies and aligns human resource strategy and programs to achieve the business goals, including alignment of staffing, development, and compensation programs",3968.0,4
@@ -6421,6 +6477,7 @@ Source new sales opportunities through inbound lead follow-up and outbound cold 
 Support the CABAIL team in generating and delivering reports and briefings on the data collected and the final analysis of the information with recommendations to leadership,4013.0,1
 "Ensures proactive alignment with stakeholders, including Data Science teams in Pharma R&D, Vx Tech and Biostatistics & Statistical Programming, to maximize Data Science impact, align on Digital Innovation strategy and support implementation of new processes, trainings, systems, vendor quality assessments, audits and inspections.",4014.0,1
 Completes monthly balance sheet account reconciliations and investigate/resolve discrepancies.,4015.0,4
+"Connect and collaborate with subject matter experts in biology, chemistry, and medicine",4017.0,1
 "Interacting with scientists, gathering requirements and understand business process",4018.0,1
 Determines the continuous improvement opportunities of current predictive modeling algorithms.,4019.0,1
 "Defines application scope and objectives, including impact to interfaces.",4020.0,3
@@ -6430,6 +6487,7 @@ Create solutions that balance business requirements with information and cyber s
 "Advanced understanding of probability, statistics, machine learning, data science",4024.0,1
 Create Lighting Specifications for Machine Vision Equipment,4025.0,3
 Adding new metrics and aggregations to our data warehouse to make new classes of questions answerable,4026.0,1
+Periodically follow up on projects in progress.,4027.0,4
 Work with existing systems to track and manage requests and issues.,4028.0,3
 "Review with the customer relevant Support Center change requests, defects and knowledge articles.",4029.0,4
 Prepares and manage submittals & RFI and maintain all documentation to support the company position for claims resolution.,4030.0,4
@@ -6445,6 +6503,7 @@ Use large data sets to perform entity resolution and extraction for work product
 "Demonstrated experience with programming languages i.e. Java, Python or R",4040.0,3
 Work well in a team environment,4041.0,3
 Hands on experience in writing Pig Scripts and Hive data modeling.,4043.0,1
+Act as a reference expert in all aspects of technical integration of Integration Services.,4044.0,3
 Lead ML models development using Python/Tensorflow/Keras/Spark stack.,4046.0,1
 Supports project developing solutions for Modernization and Sustainment tasks,4047.0,3
 Ability to provide subject matter expertise on the applications the team supports.,4048.0,3
@@ -6482,6 +6541,7 @@ Knowledge of basic shop mathematic principles to solve problems,4082.0,3
 Influence product teams through presentation of data-based recommendations,4084.0,1
 Design security architecture elements to mitigate threats as they emerge,4085.0,3
 "Deliver lectures and tutorials on: scientific Python, SQL, probability, statistics (Bayesian and frequentist), machine learning, and data engineering.",4086.0,1
+"Maintains knowledge on current and emerging developments/trends for assigned area(s) of responsibility, assesses the impact, and collaborates with senior management to incorporate new trends and developments in current and future solutions.",4088.0,4
 "Recommends accounting treatment of non-routine business transactions, performs ad-hoc analysis and completes special projects.",4089.0,4
 Document change requests/deficiencies of the product or capability as a result of test data analysis.,4090.0,3
 "Develop your skills through training courses, mentoring, and daily interaction with clients",4091.0,4
@@ -6501,6 +6561,7 @@ Solution development specifications and deployment steps,4103.0,3
 Implements batch and real-time model scoring to drive actions.,4105.0,1
 Overtime may be required in order to meet state deadlines.,4106.0,4
 "Advisory activities on study design, readout selection, data analysis strategies;",4108.0,1
+Analyze requirements and transform them into technical designs,4109.0,2
 Provides subject matter expertise to team members and applicable internal/external stakeholders on complex assignments/projects for his/her assigned area(s) of responsibility.,4110.0,3
 "Candidate may be responsible for layout of presentations, reports, and statistical tables. Coordinates project activities and ensures all project phases are documented appropriately.",4111.0,4
 Primary duties may include but are not limited to:,4112.0,3
@@ -6568,6 +6629,7 @@ Design and develop integration solutions,4178.0,3
 Develop and test technical solutions,4180.0,3
 "Develop and deliver progress reports, proposals, requirements documentation, and presentations.",4181.0,3
 Knowledge of database tools and current data science processes.,4182.0,1
+Understand data needs and construct data pipelines for automating and accelerating data preparation.,4183.0,2
 Orchestrate the functional team collection of process requirements and enhancement opportunities for what the future state process must include,4184.0,4
 Must be proficient in writing and maintaining batch jobs.,4185.0,4
 "Identify, collect, synthesize, organize, and manage process knowledge in support of business units across the enterprise.",4186.0,4
@@ -6602,6 +6664,7 @@ Ensures that system improvements are successfully implemented.,4219.0,3
 Ability to influence and guide across departmental boundaries.,4220.0,4
 Automate end-to-end ETL/ML pipelines with structural understanding of data products.,4221.0,1
 "Develop, document, make recommendations, and communicate plans for investing in IT infrastructure, including analysis of cost reduction opportunities.",4222.0,4
+Have knowledge of cloud technologies such as Amazon Web Services and either be certified or be able to become certified in one or more cloud roles.,4223.0,3
 "Create SCADE models, code generation and SFunction.",4224.0,1
 Participate in the timely resolution of shop floor manufacturing problems and ensure proper documentation of manufacturing procedures.,4225.0,3
 Recommend equipment or facilities changes to effect cost reduction or cost avoidance.,4226.0,3
@@ -6625,6 +6688,7 @@ Use office and instrumentation specific computer software,4242.0,3
 "Identify and analyze opportunities for new, changed, and/or improved processes, data, or technology providing clear picture of possible outcomes",4244.0,1
 "Participate in all phases of software and hardware development to include requirements development, risk assessments, and acceptance criteria development.",4245.0,3
 "Monitor and control all phases of development process and analysis, design, construction, testing, and implementation as well as provide user and operational support on applications to business users",4246.0,3
+"As needed or as directed, assists CISO team to investigate and addresses security incidents related to the project promptly, documents the results of the investigation, including advising management of issues, and implementing risk mitigation strategies.",4247.0,4
 Assist with inventory counts if needed.,4248.0,4
 "Product Optimization: Driving a strategy that creates best-in-class Amazon Product Pages that maximizes the success of those pages via optimal discover-ability, traffic, and conversions.",4249.0,4
 Developing automated machine learning tools to provide digital experience in loan origination space,4250.0,1
@@ -6638,9 +6702,11 @@ Work closely with machine and power electronics hardware team to optimize system
 "Development of tailored systems and analytical models for explorative analytics of pre-clinical; clinical, and epidemiological data as well as development of analysis pipelines using combinations of heterogeneous, high dimensional datasets;",4258.0,1
 Work independently with members of the user community to define and document development requirements,4259.0,3
 Mentor junior team members in best practices and standards,4260.0,3
+Serve as an integrator between business needs and technology solutions,4261.0,4
 Ability to apply various predictive modeling techniques to develop solutions to various real-world problems.,4262.0,1
 "Supports existing software application to cover incident     management, problem management, and release management.",4263.0,3
 "Work collaboratively with a team to design and develop mobile and web applications from concept to production for various our clients using a variety of tools (i.e. ""using the right tool for the job"")",4264.0,3
+Contributes and develops knowledge-based articles; may perform senior or expert level tasks for assigned products and skills; prepares articles for other TSEs and/or customers regarding technical solutions,4265.0,4
 Understanding of Software Development Life Cycle (SDLC) processes,4266.0,3
 Determine if data is compliant and defendable based on industry regulations and methodology,4267.0,1
 Investigate historical data for each debt or bill,4269.0,4
@@ -6698,6 +6764,7 @@ Adhere to all safety and quality policies.,4322.0,3
 Collaborate with business analysts to define software requirements for programming effort,4326.0,3
 "Experience working with multi-vendor, multi-culture, distributed offshore and onshore development teams in dynamic and complex environment",4327.0,3
 Perform analysis of large datasets both in the cloud and on premise.,4329.0,1
+Mentor and pair with change agents within client organizations on becoming true Lean/Agile champions,4330.0,4
 Provide electrical and controls engineering expertise for the design of new equipment & system introductions,4332.0,3
 Must have strong communication and interpersonal skills.,4333.0,3
 Demonstrated knowledge or experience with data science techniques or formal data science training.,4335.0,1
@@ -6709,6 +6776,7 @@ Coordinate all project-specific engineering efforts with our office locations wo
 "Provide guidance and assist with planning and deployment of upgrades, changes and new functionality.",4341.0,3
 "Consults with line management, providing the Head of People and Culture guidance when appropriate.",4342.0,4
 This individual will serve as the electronics and embedded HW/SW systems subject matter expert for the automotive segment.,4343.0,3
+Motivated collaborator and an excellent communicator of ideas to both technical and non-technical audiences.,4344.0,2
 "Advanced skills and training in predictive modeling, data mining and other quantitative and research analytics (Non-Linear Regression Analysis, Multivariate Analysis, Bayesian Methods, Generalized Linear Models, Decision Trees, Non Parametric estimations, etc.).",4345.0,1
 "Provide support in specialized technology areas that can include, but is not limited to, elements such as: Web design, requirements/specifications definition, analysis, assessments, planning, design, development, integration, testing, installation, performance tuning, deployment, or maintenance.",4346.0,4
 "Monitor production systems, troubleshoot issues, and assist in remediation fixes",4347.0,3
@@ -6720,6 +6788,7 @@ Coordinate the orientation process/scheduling for new hires,4352.0,4
 Escalate to stakeholders/management in case of unresolved challenges.,4353.0,4
 Create Vision Calibration Files for Asset-to-Asset performance equivalency,4354.0,3
 Strong understanding of business requirements,4355.0,4
+"Expertise developing security-focused content for Splunk, including creation of complex threat detection logic and operational dashboards",4356.0,3
 "Use of database technologies such as Oracle, MySQL, or SQL-based equivalents",4358.0,1
 Ability to learn the latest technologies.,4359.0,2
 "Provide expert guidance and direction to government, senior level technicians, and managers.",4360.0,1
@@ -6746,6 +6815,7 @@ Experience understanding Common Vulnerabilities and Exposures (CVE) and Web Appl
 Apply new and/or existing modeling approaches to conduct resistance risk analyses for the application of insecticidal proteins.,4383.0,1
 Is a person for solution expertise / thought-leader perspective,4384.0,4
 Review Terms and Conditions with legal and commercial management.,4385.0,4
+Determines acceptance criteria for final UAT code,4386.0,1
 Understand and be able to leverage core concepts of video processing and/or audio processing,4387.0,3
 Familiarity with distributed storage and processing for Big Data,4388.0,1
 "Prepare, assist, or participate in system design, specification development, and design review of control systems hardware and software for manufacturing and inspection equipment.",4389.0,3
@@ -6754,12 +6824,14 @@ Work with Enterprise leadership in building a standard,4391.0,1
 Supporting immigration/visa programs as appropriate,4392.0,4
 "Data gathering, preprocessing and visualization",4393.0,1
 Use Data Science and engineering techniques to satisfy data requirements for an IC DoD customer.,4395.0,1
+"Using open source software libraries from the field of signal processing, computer vision and data science",4396.0,2
 "Ensures metrics, dashboards and other reports are developed and sustained to support all user needs including VBA needs for tracking program integrity.",4397.0,3
 Recommend and develop security measures in post implementation analysis of business usage to ensure successful system design and functionality,4399.0,4
 Provide a channel for direct communication about our product critical issues.,4400.0,3
 Promote and use standard biomedical terminologies and ontologies (e.g. UMLS),4401.0,1
 Lead and investigate non-conformance issues using relentless root cause analysis tools.,4402.0,3
 "Appropriately assess risk when business decisions are made, demonstrating particular consideration for the firm's reputation and safeguarding our company, its clients and assets, by driving compliance with applicable laws, rules and regulations, adhering to Policy, applying sound ethical judgment regarding personal behavior, conduct and business practices, and escalating, managing and reporting control issues with transparency.",4403.0,4
+Create accurate floor plans in Xactimate Sketch,4406.0,4
 Present proposal to clients in cooperation with BDS and Engineering Departments as needed.,4407.0,4
 Working with large structured and unstructured data sets.,4408.0,1
 Conduct an interface analysis to analyze and deconstruct the way other applications interact with the system. Review all existing documentation that is pertinent to business objectives or that may hold data related to legacy system functionality,4411.0,3
@@ -6788,6 +6860,7 @@ Writing scopes and statements of work for Cloud/DevOps projects,4436.0,3
 Assesses when it is necessary to engage or escalate to more senior resources to resolve more complex issues,4439.0,4
 Own and manage team-oriented initiatives. Remove project and organizational roadblocks to deliver analyses that facilitate business decisions.,4440.0,1
 Work under tight deadlines with multiple priorities where the ability to prioritize appropriately is critical.,4441.0,1
+Prepare budget recommendations and adhere to authorized budgets. Be aware of and take advantage of opportunities for savings.,4442.0,4
 "Documenting stories, use cases, epics, business rules, gathering user feedback etc",4443.0,4
 "Champion technology and the digitalization of client business. Assess costs/benefits of new projects and justify funding on shortlisted projects, provide architectural guidance, support product evaluation and make recommendations.",4444.0,4
 Support the procurement and purchase of materials for AAC programs,4445.0,4
@@ -6800,6 +6873,7 @@ Collaborates with upper management to assess the potential effects of proposed s
 Share and discuss the implications of applicable our product information such as roadmaps and product announcements.,4454.0,3
 Ensure essential procedures are followed and help define operating standards and processes,4455.0,3
 Working knowledge of statistics as it applies to scientific data,4457.0,1
+"Prepares big data, implements data models developed by others, and provides database support for customer solutions.",4459.0,1
 "Demonstrable extensive knowledge and experience in formulating complex problems and developing and testing of efficient algorithms to tackle NP-hard problems with complex problem space. Incumbent must have experience in integrating METOC statistical models, including grids of observations and environmental model outputs, into algorithms; in particular focusing on the outputting course of action guidance for human decision makers.",4460.0,1
 "Build relationships with partner teams, frame and structure questions, as well as summarize and present key insights to both technical and non-technical audiences",4461.0,1
 "Technical owner of the monitoring solution(s) and responsible for daily operations, owner of performance reports and related presentations.",4462.0,3
@@ -6816,12 +6890,14 @@ Serves as lead technical resource to ensure completion of development tasks.,447
 "Design, develop, support and maintain software applications",4475.0,3
 "Troubleshoot, debug and upgrade existing systems",4476.0,3
 Research and troubleshoot systems issues to ensure continual system availability.,4478.0,3
+Working with domain experts and customers to understand the challenges in the Supply Chain problem space.,4479.0,4
 Mature and evolve the notion of framework by collaborating with other leads to form a cohesive offering across our products.,4480.0,1
 Experience with data visualization and software such as Tableau and Power BI.,4481.0,1
 Maintain a construction schedule and work with trades and management to ensure work is completed on time. Identify and present solutions when additional resources are needed.,4482.0,3
 Provide support to site stakeholders for development and deployment of reports and visuals with MS Power BI,4483.0,1
 "Development of machine learning code using python and machine learning algorithms, Testing, validation of data, implementation of algorithms, Presentation to customer , internal teams , learning new algorithms",4484.0,2
 "Familiarity with Python, Cassandra, date engineering and developing ADS's",4485.0,1
+"Experience with Machine Learning Algorithms, algorithm analysis and algorithm implementation",4486.0,2
 "Perform simple and complex queries and analyses in SQL, Python, and other programming languages to quickly uncover answers to customer questions.",4487.0,1
 "Creating/updating Manufacturing Operation Sheets, in MS Word, that are used to provide assembly and process procedures in the assembly of flight hardware",4488.0,3
 Develop a process to maintain quality and performance of statistical models and quickly identify enhancements opportunities,4489.0,1
@@ -6848,15 +6924,18 @@ Make Quality and Safety integrated in all the process of design,4509.0,3
 Actively participate in continuous improvement activities to improve Company processes and products.,4513.0,3
 "Design, develop, test, deploy, maintain, and improve software.",4514.0,3
 "Must establish and maintain local area clientele in position to refer losses. Clientele is primarily insurance adjusters but may also include community business owners, schools and municipalities.",4515.0,4
+Collaborating with senior management to develop strategy for improving organizational climate across multiple business units,4516.0,4
 "Perform continuous product and process improvement actions to support accelerating agile velocity, reducing cycle time, and lowering detects in production",4517.0,3
 Company Funded Major Medical Healthcare benefits,4518.0,4
 "This individual will maintain a high level of product & industry awareness to keep current on new suppliers, market trends, technology roadmaps, best practices, etc.",4519.0,3
 Use large data sets to perform entity resolution and extraction for data work products and create models to test the effectiveness of different courses of action.,4520.0,1
+Champion the design & execution of machine learning projects to address specific business problems determined by consultation with business partners.,4521.0,2
 Experience in statistical modeling including performance evaluation and uncertainty quantification.,4522.0,1
 Train users in implementation or conversion of systems,4523.0,3
 Sought out as coach for at least one technical skill.,4524.0,3
 "Develop new business cases based on CAPEX/OPEX, schedule, quality, Return on Investment (ROI) and Total Cost of Ownership (TCO) and compile data gathered to make recommendations to leadership on the best proposed path forward.",4525.0,1
 Leverage full Trouw USA ruminant team for optimal customer and company benefit.,4527.0,3
+"Collaborate with stakeholders to gather, consolidate, and validate business expertise throughout the project lifecycle",4528.0,4
 "Certify PCI Compliance for all PA service providers by obtaining their appropriate Attestation of Compliance (AOC) or, if none exists, including service provider work in the PAs PCI Assessment.",4529.0,4
 Are a passionate technologist who wants to drive technology and architecture strategy?,4530.0,2
 "Work in a collaborative ""hands-on Group-Lab"" environment to create scalable Manufacturing Platform (Equipment, Fixtures, Test)",4531.0,3
@@ -6877,6 +6956,7 @@ Experience with using the PMMLs from existing non Pega predictive model and usin
 Developed new CV approaches for data extraction from scanned documents,4546.0,1
 Provide recommendations on additional datasets to be incorporated to support the mission.,4547.0,1
 Hands on experience in transforming and analyzing data using HIVE QL and PIG.,4549.0,1
+Assess the impact of system changes thru change management and change control systems and develop risk mitigation and contingency plans,4550.0,3
 Performs routine administration and maintenance of Process Informatics computer systems and applications,4551.0,4
 "Familiarity with Big Data technologies, open source tools, source control tools and concepts, e.g., Git",4552.0,1
 Maintain forms and spreadsheets to enhance applicant and employee tracking,4553.0,4
@@ -6933,6 +7013,7 @@ Support the application support and IT operations teams in diagnosing and resolv
 "Provide accurate, timely, complex and sophisticated data analysis;",4607.0,1
 "Analyzes trends and metrics in partnership with the People and Culture group to develop solutions, programs and policies.",4608.0,1
 Collaborate with engineering team to bring analytical prototypes to production,4609.0,1
+"Define all the temporary works he would require, and Coordinate with Sr Methods Manager the detailed definition, and design.",4610.0,4
 "Seeks to expand areas of subject matter expertise - either through the pursuit of deeper product/solution/process knowledge or through the acquisition of broader knowledge, encompassing cross-application areas.",4611.0,3
 Deploy ML solutions to devices (Internet of things),4612.0,2
 Large scale integrated application development using SDLC methodology.,4613.0,3
@@ -6951,10 +7032,13 @@ Create High Level and Low-Level Technical Design document for the project,4627.0
 Serve as a subject matter expert on the team and act as a mentor to more junior team members; may directly manage a small team of Analysts,4628.0,1
 Develop algorithms and conduct analysis using state-of-the-art machine learning/artificial intelligence tools across different domains,4629.0,1
 "Actively contributes to insurance analytics strategy by contributing ideas, preparing presentation/sales material for customers, and product design/business case materials for our leadership.",4630.0,4
+"Drive and teach standards for code, tool use, engineering best practices, etc",4631.0,2
 Provide Tier 4 Operations support when required,4632.0,3
 "Work closely with members of the development, tests, and operations teams to troubleshoot build breaks, enforcement of software quality standards, and proper communication of the package installation steps to operations for both non-production and production environments; basic responsibilities include:",4633.0,3
+Experience in developing n-tier / distributed systems or large scale SPA applications,4634.0,3
 "Collaborate across a team of Data Scientists, Data Administrators, and Data Engineers to produce data related work products.",4635.0,1
 Partner with the global Talent Curation team when roles can be filled in any geography. Ensure open communication is kept with the global team.,4636.0,4
+Review work products developed by team,4637.0,3
 "Apply analytical best practices to identify indicators of sub-optimal performance, and communicate findings to business stakeholders and customers.",4638.0,1
 Participating or leading process discovery sessions,4639.0,4
 Demonstrated experience with statistics & statistical models,4640.0,1
@@ -6962,6 +7046,7 @@ Maintain and enhance contact with existing and potential customers.,4641.0,3
 Evangelize best practices to analytics and products teams,4642.0,1
 "Processing, cleansing, and verifying the integrity of data used for analysis. Doing ad-hoc analysis and presenting results in a clear manner.",4643.0,1
 Envision the future of LIFE SCIENCE and role that digital technologies have in enabling it,4644.0,1
+Evaluate performance results and recommends major changes affecting short-term project growth and success.,4645.0,4
 "Coordinates and helps with the taking of periodic physical Inventories; prepares reports of inventory balance, shortages, and other financial data as required.",4646.0,4
 "Review simple and complex routine and non-routine data (for three or more areas) according to departmental, corporate, and client SOPs; read and undestand analytical procedures; ensure all work is performed according to GLP/GMP requirements and apply GLP/GMP in all areas of responsibility as appropriate",4648.0,1
 Consistently researches and maintains awareness of healthcare trends and news,4649.0,1
@@ -6978,6 +7063,7 @@ Acting as an employee champion and change agent,4661.0,4
 "Apply knowledge of electronics, electrical circuits, mechanics, pneumatics, and programming",4662.0,3
 Work with street leading analysts to facilitate their requests for new and innovative data analytics.,4663.0,1
 "Provide effective provisioning, installation/configuration, operation, and maintenance of Linux Servers and Windows Server Operating Systems in VMWare Virtualized Environments in a Hosted Enterprise Cloud.",4664.0,3
+"Collaborate across diverse technology, scientific, shared service, and customer organizations to engage clients to enable development of solutions which meet their mission requirements",4665.0,4
 Design and implement real-time embedded software on DSP/FPGA etc.,4666.0,3
 Administer analytical projects and pilots for tool upgrades.,4668.0,1
 "Conduct data analysis to make business recommendations (cost-benefit, invest-divest, forecasting, impact analysis).",4669.0,1
