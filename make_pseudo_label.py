@@ -4,7 +4,7 @@ train = pd.read_csv("./data/data_augmentation_using_language_translation.csv")
 test = pd.read_csv("./data/test.csv")
 
 
-trained_output_file = "./output/pseudo_bert-large-cased_0-256_5cv_4ep.csv"
+trained_output_file = "./output/pseudo_bert-large-cased_0-192_5cv_4ep.csv"
 trained_output = pd.read_csv(trained_output_file, header=None)
 pseudo_label = trained_output.iloc[:,1]
 test["jobflag"] = pseudo_label
