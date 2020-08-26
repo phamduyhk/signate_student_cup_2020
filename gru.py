@@ -41,7 +41,7 @@ LSTM_UNITS = 80
 DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
 EPOCHS = 50
 DROP_PROB = 0.2
-MAX_LEN = 256
+MAX_LEN = 128
 # EMBEDDING_FILE = 'data/wiki-news-300d-1M.vec'
 
 
@@ -295,7 +295,7 @@ def get_gru_lstm_model(embedding_matrix):
     return model
 
 
-model_type = "gru"
+model_type = "gru_lstm"
 load_model = False
 if model_type is "gru_lstm":
     model = get_gru_lstm_model(embedding_matrix)
@@ -385,7 +385,7 @@ def train_with_cv(batch_size=32, epochs=5, num_folds=10):
     y_pred = model.predict(x_test, batch_size=1024)
     pred = np.argmax(y_pred, 1)
     submission.iloc[:, 1] = pred + 1
-    submission.to_csv('submission_{}ep_{}cv.csv'.format(epochs,
+    submission.to_csv('submission_{}_{}ep_{}cv.csv'.format(MAX_LEN, epochs,
                                                               num_folds), index=False, header=None)
 
 
